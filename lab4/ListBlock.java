@@ -2,12 +2,12 @@ import CITS2200.*;
 
 //include class WindowBlock
 
-public class ListBlock<E> implements CITS2200.List
+public class ListBlock<E>
 {
     //FIELDS
     private Object[] list;
-    private afterLast;
-    private beforeFirst;
+    private int afterLast;
+    private int beforeFirst;
 
     //-------------- CONSTRUCTORS
     /**
@@ -53,7 +53,7 @@ public class ListBlock<E> implements CITS2200.List
     /**
      * Initialises window to the before first position
      * @param w WindowBlock
-     **/
+    **/
     public void beforeFirst(WindowBlock w)
     {
 
@@ -62,86 +62,89 @@ public class ListBlock<E> implements CITS2200.List
     /**
      * Initialises window to the after last position
      * @param w WindowBlock
-     **/
-     public void afterLast(WindowBlock w)
-     {
+    **/
+    public void afterLast(WindowBlock w)
+    {
 
-     }
+    }
 
-     /**
-      * Moves the window to the next window position
-      * @param w WindowBlock
-      * @throws Overflow if the window is over the after last position
-      **/
-      public void next(WindowBlock w) throws Overflow
-      {
+    /**
+     * Moves the window to the next window position
+     * @param w WindowBlock
+     * @throws Overflow if the window is over the after last position
+    **/
+    public void next(WindowBlock w) throws Overflow
+    {
 
-      }
+    }
 
-      /**
-       * Moves the window to the previous window position
-       * @param w WindowBlock
-       * @throws Underflow if the window is over the before first position
-       **/
-       public void previous(WindowBlock w) throws Underflow
-       {
+    /**
+     * Moves the window to the previous window position
+     * @param w WindowBlock
+     * @throws Underflow if the window is over the before first position
+    **/
+    public void previous(WindowBlock w) throws Underflow
+    {
 
-       }
+    }
 
-       /**
-        * Extra element is added to the ListBlock after the window
-        * @param e Generic class
-        * @param w WindowBlock
-        * @throws Overflow if the window is over the after last position
-        **/
-        public void insertAfter(E e, WindowBlock w) throws Overflow
-        {
+    /**
+     * Extra element is added to the ListBlock after the window
+     * @param e Generic class
+     * @param w WindowBlock
+     * @throws Overflow if the window is over the after last position
+    **/
+    public void insertAfter(E e, WindowBlock w) throws Overflow
+    {
 
-        }
+    }
 
-        /**
-         * An extra element is added to the list before the window
-         * @param e Generic class
-         * @param w WindowBlock
-         * @throws Underflow if the window is over the before first position
-         **/
-         public void insertBefore(E e, WindowBlock w) throws Underflow
-         {
+    /**
+     * An extra element is added to the list before the window
+     * @param e Generic class
+     * @param w WindowBlock
+     * @throws Underflow if the window is over the before first position
+    **/
+    public void insertBefore(E e, WindowBlock w) throws Underflow
+    {
 
-         }
+    }
 
-         /**
-          * Examines the element in the window
-          * @return E element under the window
-          * @throws Underflow if the window is over the before first position
-          * @throws Overflow if the window is over the after last position
-          * @param w WindowBlock
-          **/
-          public E examine(WindowBlock w) throws Underflow, Overflow
-          {
+    /**
+     * Examines the element in the window
+     * @return E element under the window
+     * @throws Underflow if the window is over the before first position
+     * @throws Overflow if the window is over the after last position
+     * @param w WindowBlock
+    **/
+    public E examine(WindowBlock w) throws Underflow, Overflow
+    {
 
-          }
+    }
 
-          /**
-           * Replaces the element under the window
-           * @return E the old element under the window
-           * @param e Generic class
-           * @param w WindowBlock
-           * @throws Underflow if the window is over the before first position
-           * @throws Overflow if the window is over the after last position
-           **/
-           public E replace(E e, WindowBlock w) throws Underflow, Overflow
-           {
+    /**
+     * Replaces the element under the window
+     * @return E the old element under the window
+     * @param e Generic class
+     * @param w WindowBlock
+     * @throws Underflow if the window is over the before first position
+     * @throws Overflow if the window is over the after last position
+    **/
+    public E replace(E e, WindowBlock w) throws Underflow, Overflow
+    {
 
-           }
+    }
 
-           /**
-            * Deletes the element under the window and places the window
-            * over the next element.
-            * @return E the old element under the window.
-            * @param w WindowBlock
-            * @throws Underflow if the window is over the before first position
-            * @throws Overflow if the window is over the after last position.
-            **/
-            public E delete(WindowBlock w) throws Underflow, Overflow
+    /**
+     * Deletes the element under the window and places the window
+     * over the next element.
+     * @return E the old element under the window.
+     * @param w WindowBlock
+     * @throws Underflow if the window is over the before first position
+     * @throws Overflow if the window is over the after last position.
+    **/
+    public E delete(WindowBlock w) throws Underflow, Overflow
+    {
+
+    }
 }
