@@ -6,5 +6,8 @@ public class WindowBlock
     /**
      * Constructor of the WindowBlock Object
      **/
-    public WindowBlock() {}
+    public WindowBlock()
+    {
+        index = -1; //initialise to before first position
+    }
 }

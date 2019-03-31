@@ -31,6 +31,11 @@ public class ListBlock<E>
         return (afterLast - beforeFirst) == 1;
     }
 
+    public boolean isFull()
+    {
+        return (afterLast-beforeFirst) >= list.length+1;
+    }
+
     /**
      * Check if window is over the "before first" position
      * @return true if window is over the before first position
@@ -46,7 +51,7 @@ public class ListBlock<E>
      **/
     public boolean isAfterLast(WindowBlock w)
     {
-        return w.index == afterLast;
+        return w.index == list.length;
     }
 
     //--------- MANIPULATORS
@@ -56,7 +61,7 @@ public class ListBlock<E>
     **/
     public void beforeFirst(WindowBlock w)
     {
-
+        w.index = beforeFirst;
     }
 
     /**
@@ -65,7 +70,7 @@ public class ListBlock<E>
     **/
     public void afterLast(WindowBlock w)
     {
-
+        w.index = afterLast;
     }
 
     /**
@@ -75,7 +80,14 @@ public class ListBlock<E>
     **/
     public void next(WindowBlock w) throws Overflow
     {
-
+        if(!isAfterLast(w))
+        {
+            w.index++; //next window position
+        }
+        else
+        {
+            throws new Overflow("Window in 'after last' position.");
+        }
     }
 
     /**
@@ -85,7 +97,14 @@ public class ListBlock<E>
     **/
     public void previous(WindowBlock w) throws Underflow
     {
-
+        if(!isBeforeFirst(w))
+        {
+            w.index--;
+        }
+        else
+        {
+            throws new Underflow("Window in 'before first' position.");
+        }
     }
 
     /**
@@ -96,7 +115,20 @@ public class ListBlock<E>
     **/
     public void insertAfter(E e, WindowBlock w) throws Overflow
     {
-
+        if(!isFull())
+        {
+            if(!isAfterLast(w))
+            {
+                list[w.index+1] = e;
+                afterLast++;
+            }
+            else
+            {
+                throws new Overflow("Window is over the after last position.");
+            }
+        }
+        else
+            throw new Overflow("Block implementation of list is full.");
     }
 
     /**
@@ -107,7 +139,23 @@ public class ListBlock<E>
     **/
     public void insertBefore(E e, WindowBlock w) throws Underflow
     {
-
+        if(!isFull())
+        {
+            if(!isBeforeFirst(w))
+            {
+                for(int i = after-1; i >= w.index; i--)
+                {
+                    list[i+1] = list[i];
+                }
+                afterLast++;
+                list[w.index] = e;
+                w.index++;
+            }
+            else
+                throw new Underflow("Window is over the 'before first' position.");
+        }
+        else
+          throw new Underflow("Block implementation of list is full.");
     }
 
     /**
@@ -119,12 +167,26 @@ public class ListBlock<E>
     **/
     public E examine(WindowBlock w) throws Underflow, Overflow
     {
-
+        if(!isBeforeFirst(w))
+        {
+            if(!isAfterLast(w))
+            {
+                return list[w.index];
+            }
+            else
+            {
+                throw new Overflow("Window is over the 'after last' position.");
+            }
+        }
+        else
+        {
+            throw Underflow("Window is over the 'before first' position.");
+        }
     }
 
     /**
      * Replaces the element under the window
-     * @return E the old element under the window
+     * @return the old element under the window of type E
      * @param e Generic class
      * @param w WindowBlock
      * @throws Underflow if the window is over the before first position
@@ -132,7 +194,22 @@ public class ListBlock<E>
     **/
     public E replace(E e, WindowBlock w) throws Underflow, Overflow
     {
+        if(!isEmpty())
+        {
+            if(!isBeforeFirst(w))
+            {
+                if(!isAfterLast(w))
+                {
 
+                }
+                else
+                    throw new OverFlow();
+            }
+            else
+                throw new Underflow();
+        }
+        else
+            throw new Overflow();
     }
 
     /**
