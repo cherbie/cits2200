@@ -200,16 +200,18 @@ public class ListBlock<E>
             {
                 if(!isAfterLast(w))
                 {
-
+                    E element = list[w.index];
+                    list[w.index] = e;
+                    return element;
                 }
                 else
-                    throw new OverFlow();
+                    throw new OverFlow("Window is in the 'after last' position.");
             }
             else
-                throw new Underflow();
+                throw new Underflow("Window is in the 'before first' position.");
         }
         else
-            throw new Overflow();
+            throw new Overflow("List is empty.");
     }
 
     /**
@@ -222,6 +224,27 @@ public class ListBlock<E>
     **/
     public E delete(WindowBlock w) throws Underflow, Overflow
     {
-
+      if(!isEmpty())
+      {
+          if(!isBeforeFirst(w))
+          {
+              if(!isAfterLast(w))
+              {
+                  E element = list[w.index];
+                  for(int i = afterLast-1; i >= w.index; i--)
+                  {
+                      
+                  }
+                  list[w.index] = e;
+                  return element;
+              }
+              else
+                  throw new OverFlow("Window is in the 'after last' position.");
+          }
+          else
+              throw new Underflow("Window is in the 'before first' position.");
+      }
+      else
+          throw new Overflow("List is empty.");
     }
 }
