@@ -46,10 +46,18 @@ public class ListBlockTest
         list.afterLast(window);
         assert list.isAfterLast(window) : "Window is not in the after last position.";
 
+        list.beforeFirst(window);
+
         //INSERT TWO ELEMENTS INTO TO THE LIST
         list.insertAfter(values[count], window);
+        list.next(window);
+        System.out.println("--insertAfter-- " + list.examine(window));
+        list.previous(window);
         count++;
         list.insertAfter(values[count], window);
+        list.next(window);
+        System.out.println("--insertAfter-- " + list.examine(window));
+        list.previous(window);
         count++;
 
         //EXAMINE TWO ELEMENTS IN THE LIST
@@ -61,6 +69,35 @@ public class ListBlockTest
         assert s.equals(values[1]) : "Window '1' != values[1]";
         System.out.println("Initial insertAfter() calls were successful. \n");
 
-        return;
+        //IMPLEMENT insertBefore()
+        list.insertBefore(values[count], window);
+        list.previous(window);
+        System.out.println(list.examine(window));
+        list.next(window);
+        count++;
+        list.insertBefore(values[count], window);
+        list.previous(window);
+        System.out.println(list.examine(window));
+        list.next(window);
+        count++;
+
+        //PRINT TO STANDARD OUT FOR COMPARISON
+        list.beforeFirst(window); //set window to the before first position
+        for(int i = 0; i < count; i++)
+        {
+            list.next(window);
+            System.out.println("--- " + values[i] + " --- " + list.examine(window));
+        }
+
+        //TEST replace() LIST FUNCTION
+        s = list.replace("Replaced", window);
+        System.out.println("--Replace call-- " + list.examine(window));
+        assert !s.equals("Replaced") : "replacement successful.";
+
+        //TEST Delete
+        s = list.delete(window);
+        System.out.println("-deleted- " + s + " - now - " + list.examine(window));
+        assert !s.equals(list.examine(window)) : "Deleted element is not in window.";
+        count--;
     }
 }

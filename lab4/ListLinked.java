@@ -1,24 +1,19 @@
 import CITS2200.*;
 
-//include class WindowBlock
-
-public class ListBlock<E>
+public class ListLinked implements CITS2200.List
 {
     //FIELDS
-    private Object[] list;
-    private int afterLast;
-    private int beforeFirst;
+    private Link before;
+    private Link after;
 
     //-------------- CONSTRUCTORS
     /**
-     * Initialises an empty list with two associated window positions
-     * before first and after last
+     * Initialises an empty list.
     **/
-    public ListBlock(int size)
+    public ListLinked()
     {
-        list = new Object[size];
-        afterLast = 0;
-        beforeFirst = -1;
+        after = new Link(null, null);
+        before = new Link(null, after); //linked to after
     }
 
     //-------------- CHECKERS
@@ -28,30 +23,25 @@ public class ListBlock<E>
     **/
     public boolean isEmpty()
     {
-        return (afterLast - beforeFirst) == 1;
-    }
-
-    public boolean isFull()
-    {
-        return afterLast >= list.length;
+        return before.successor == after;
     }
 
     /**
      *Check if window is over the "before first" position
      * @return true if window is over the before first position
     **/
-    public boolean isBeforeFirst(WindowBlock w)
+    public boolean isBeforeFirst(WindowLinked w)
     {
-        return w.index == beforeFirst;
+        return w.link == before;
     }
 
     /**
      * Check if window is over the "after last" position
      * @return true if window is over the after last position
      **/
-    public boolean isAfterLast(WindowBlock w)
+    public boolean isAfterLast(WindowLinked w)
     {
-        return w.index == afterLast;
+        return w.link == after;
     }
 
     //--------- MANIPULATORS
@@ -59,43 +49,43 @@ public class ListBlock<E>
      * Initialises window to the before first position
      * @param w WindowBlock
     **/
-    public void beforeFirst(WindowBlock w)
+    public void beforeFirst(WindowLinked w)
     {
-        w.index = beforeFirst;
+        w.link = before;
     }
 
     /**
      * Initialises window to the after last position
      * @param w WindowBlock
     **/
-    public void afterLast(WindowBlock w)
+    public void afterLast(WindowLinked w)
     {
-        w.index = afterLast;
+        w.link = after;
     }
 
     /**
      * Moves the window to the next window position
      * @param w WindowBlock
-     * @throws Overflow if the window is over the after last position
+     * @throws OutOfBounds if the window is past the end of the list
     **/
-    public void next(WindowBlock w) throws Overflow
+    public void next(WindowLinked w) throws OutOfBounds
     {
         if(!isAfterLast(w))
         {
-            w.index++; //next window position
+            w.link = w.link.successor; //next window position not deleting element
         }
         else
         {
-            throw new Overflow("Window in 'after last' position.");
+            throw new OutOfBounds("Window is past the end of the list.");
         }
     }
 
     /**
      * Moves the window to the previous window position
      * @param w WindowBlock
-     * @throws Underflow if the window is over the before first position
+     * @throws OutOfBounds if the window is before the start of the list
     **/
-    public void previous(WindowBlock w) throws Underflow
+    public void previous(WindowBlock w) throws OutOfBounds
     {
         if(!isBeforeFirst(w))
         {
@@ -103,7 +93,7 @@ public class ListBlock<E>
         }
         else
         {
-            throw new Underflow("Window in 'before first' position.");
+            throw new OutOfBounds("Window is before the start of the list.");
         }
     }
 
@@ -111,65 +101,52 @@ public class ListBlock<E>
      * Extra element is added to the ListBlock after the window
      * @param e Generic class
      * @param w WindowBlock
-     * @throws Overflow if the window is over the after last position
+     * @throws OutOfBounds if the window is past the end of the list
     **/
-    public void insertAfter(E e, WindowBlock w) throws Overflow
+    public void insertAfter(E e, WindowBlock w) throws OutOfBounds
     {
-        if(!isFull())
+        if(!isAfterLast(w))
         {
-            if(!isAfterLast(w))
+            for(int i = afterLast-1; i > w.index; i--)
             {
-                for(int i = afterLast-1; i > w.index; i--)
-                {
-                    list[i+1] = list[i];
-                }
-                list[w.index+1] = e;
-                afterLast++;
+                list[i+1] = list[i];
             }
-            else
-            {
-                throw new Overflow("Window is over the after last position.");
-            }
+            list[w.index+1] = e;
+            afterLast++;
         }
         else
-            throw new Overflow("Block implementation of list is full.");
+            throw new OutOfBounds("Window is past the end of the list.");
     }
 
     /**
      * An extra element is added to the list before the window
      * @param e Generic class
      * @param w WindowBlock
-     * @throws Underflow if the window is over the before first position
+     * @throws OutOfBounds if the window is before the start of the list
     **/
-    public void insertBefore(E e, WindowBlock w) throws Underflow
+    public void insertBefore(E e, WindowBlock w) throws OutOfBounds
     {
-        if(!isFull())
+        if(!isBeforeFirst(w))
         {
-            if(!isBeforeFirst(w))
+            for(int i = afterLast-1; i >= w.index; i--)
             {
-                for(int i = afterLast-1; i >= w.index; i--)
-                {
-                    list[i+1] = list[i];
-                }
-                afterLast++;
-                list[w.index] = e;
-                w.index++;
+                list[i+1] = list[i];
             }
-            else
-                throw new Underflow("Window is over the 'before first' position.");
+            afterLast++;
+            list[w.index] = e;
+            w.index++;
         }
         else
-            throw new Overflow("Block implementation of list is full.");
+            throw new OutOfBounds("Window is before the start of the list");
     }
 
     /**
      * Examines the element in the window
      * @return E element under the window
-     * @throws Underflow if the window is over the before first position
-     * @throws Overflow if the window is over the after last position
-     * @param w WindowBlock
+     * @throws OutOfBounds if the window is outside the list
+     * @param w WindowLinked
     **/
-    public E examine(WindowBlock w) throws Underflow, Overflow
+    public E examine(WindowLinked w) throws OutOfBounds
     {
         if(!isEmpty())
         {
