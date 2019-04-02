@@ -33,11 +33,11 @@ public class ListBlock<E>
 
     public boolean isFull()
     {
-        return (afterLast-beforeFirst) >= list.length+1;
+        return afterLast >= list.length;
     }
 
     /**
-     * Check if window is over the "before first" position
+     *Check if window is over the "before first" position
      * @return true if window is over the before first position
     **/
     public boolean isBeforeFirst(WindowBlock w)
@@ -86,7 +86,7 @@ public class ListBlock<E>
         }
         else
         {
-            throws new Overflow("Window in 'after last' position.");
+            throw new Overflow("Window in 'after last' position.");
         }
     }
 
@@ -103,7 +103,7 @@ public class ListBlock<E>
         }
         else
         {
-            throws new Underflow("Window in 'before first' position.");
+            throw new Underflow("Window in 'before first' position.");
         }
     }
 
@@ -126,7 +126,7 @@ public class ListBlock<E>
                 }
                 else
                 {
-                    throws new Overflow("Window is over the after last position.");
+                    throw new Overflow("Window is over the after last position.");
                 }
             }
             else
@@ -150,7 +150,7 @@ public class ListBlock<E>
             {
                 if(!isBeforeFirst(w))
                 {
-                    for(int i = after-1; i >= w.index; i--)
+                    for(int i = afterLast-1; i >= w.index; i--)
                     {
                         list[i+1] = list[i];
                     }
@@ -183,7 +183,7 @@ public class ListBlock<E>
             {
                 if(!isAfterLast(w))
                 {
-                    return list[w.index];
+                    return (E) list[w.index];
                 }
                 else
                 {
@@ -192,7 +192,7 @@ public class ListBlock<E>
             }
             else
             {
-                throw Underflow("Window is over the 'before first' position.");
+                throw new Underflow("Window is over the 'before first' position.");
             }
         }
         else
@@ -215,12 +215,12 @@ public class ListBlock<E>
             {
                 if(!isAfterLast(w))
                 {
-                    E element = list[w.index];
+                    E element = (E) list[w.index];
                     list[w.index] = e;
                     return element;
                 }
                 else
-                    throw new OverFlow("Window is in the 'after last' position.");
+                    throw new Overflow("Window is in the 'after last' position.");
             }
             else
                 throw new Underflow("Window is in the 'before first' position.");
@@ -245,7 +245,7 @@ public class ListBlock<E>
           {
               if(!isAfterLast(w))
               {
-                  E element = list[w.index];
+                  E element = (E) list[w.index];
                   for(int i = w.index; i < afterLast; i++)
                   {
                       list[i] = list[i+1];
@@ -254,7 +254,7 @@ public class ListBlock<E>
                   return element;
               }
               else
-                  throw new OverFlow("Window is in the 'after last' position.");
+                  throw new Overflow("Window is in the 'after last' position.");
           }
           else
               throw new Underflow("Window is in the 'before first' position.");
