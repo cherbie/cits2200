@@ -89,7 +89,16 @@ public class ListLinked implements CITS2200.List
     {
         if(!isBeforeFirst(w))
         {
-            w.index--;
+            Link first = before.successor; //first element in the list.
+            Link prev = null;
+            while(first.successor != w.link)
+            {
+                prev = first;
+                first = first.successor;
+                if(first == after)
+                    throw new OutOfBounds("Could not navigate to previous element.");
+            }
+            w.link = prev; //set window to the previous element.
         }
         else
         {
