@@ -1,6 +1,6 @@
 import CITS2200.*;
 
-public class ListLinked implements CITS2200.List
+public class ListLinked<E> implements CITS2200.List
 {
     //FIELDS
     private Link before;
@@ -10,7 +10,7 @@ public class ListLinked implements CITS2200.List
     /**
      * Initialises an empty list.
     **/
-    public ListLinked()
+    public ListLinked<E>()
     {
         after = new Link(null, null);
         before = new Link(null, after); //linked to after
@@ -47,7 +47,7 @@ public class ListLinked implements CITS2200.List
     //--------- MANIPULATORS
     /**
      * Initialises window to the before first position
-     * @param w WindowBlock
+     * @param w WindowLinked
     **/
     public void beforeFirst(WindowLinked w)
     {
@@ -56,7 +56,7 @@ public class ListLinked implements CITS2200.List
 
     /**
      * Initialises window to the after last position
-     * @param w WindowBlock
+     * @param w WindowLinked
     **/
     public void afterLast(WindowLinked w)
     {
@@ -65,7 +65,7 @@ public class ListLinked implements CITS2200.List
 
     /**
      * Moves the window to the next window position
-     * @param w WindowBlock
+     * @param w WindowLinked
      * @throws OutOfBounds if the window is past the end of the list
     **/
     public void next(WindowLinked w) throws OutOfBounds
@@ -82,10 +82,10 @@ public class ListLinked implements CITS2200.List
 
     /**
      * Moves the window to the previous window position
-     * @param w WindowBlock
+     * @param w WindowLinked
      * @throws OutOfBounds if the window is before the start of the list
     **/
-    public void previous(WindowBlock w) throws OutOfBounds
+    public void previous(WindowLinked w) throws OutOfBounds
     {
         if(!isBeforeFirst(w))
         {
@@ -163,31 +163,27 @@ public class ListLinked implements CITS2200.List
             {
                 if(!isAfterLast(w))
                 {
-                    return (E) list[w.index];
+                    return w.link.item;
                 }
                 else
-                {
-                    throw new Overflow("Window is over the 'after last' position.");
-                }
+                    throw new OutOfBounds("Window is over the 'after last' position.");
             }
             else
-            {
-                throw new Underflow("Window is over the 'before first' position.");
-            }
+                throw new OutOfBounds("Window is over the 'before first' position.");
         }
         else
-            throw new Underflow("List is empty.");
+            throw new OutOfBounds("List is empty.");
     }
 
     /**
      * Replaces the element under the window
      * @return the old element under the window of type E
      * @param e Generic class
-     * @param w WindowBlock
-     * @throws Underflow if the window is over the before first position
-     * @throws Overflow if the window is over the after last position
+     * @param w WindowLinked
+     * @throws OutOfBounds if the window is over the before first position,
+     * after last positions or empty.
     **/
-    public E replace(E e, WindowBlock w) throws Underflow, Overflow
+    public E replace(E e, WindowLinked w) throws OutOfBounds
     {
         if(!isEmpty())
         {
@@ -195,29 +191,29 @@ public class ListLinked implements CITS2200.List
             {
                 if(!isAfterLast(w))
                 {
-                    E element = (E) list[w.index];
-                    list[w.index] = e;
+                    E element = (E) w.link.item;
+                    w.link.item = e;
                     return element;
                 }
                 else
-                    throw new Overflow("Window is in the 'after last' position.");
+                    throw new OutOfBounds("Window is after the last element.");
             }
             else
-                throw new Underflow("Window is in the 'before first' position.");
+                throw new OutOfBounds("Window is before the first element.");
         }
         else
-            throw new Overflow("List is empty.");
+            throw new OutOfBounds("Linked list is empty.");
     }
 
     /**
      * Deletes the element under the window and places the window
      * over the next element.
      * @return E the old element under the window.
-     * @param w WindowBlock
-     * @throws Underflow if the window is over the before first position
-     * @throws Overflow if the window is over the after last position.
+     * @param w WindowLinked
+     * @throws OutOfBounds if the window is over the before first position,
+     * before the first element or the linked list is empty.
     **/
-    public E delete(WindowBlock w) throws Underflow, Overflow
+    public E delete(WindowLinked w) throws OutOfBounds
     {
       if(!isEmpty())
       {
@@ -225,22 +221,19 @@ public class ListLinked implements CITS2200.List
           {
               if(!isAfterLast(w))
               {
-                  E element = (E) list[w.index];
-                  for(int i = w.index; i < afterLast-1; i++)
-                  {
-                      list[i] = list[i+1];
-                  }
-                  w.index--;
-                  afterLast--; //decrement the after last position
+                  E element = (E) w.link.item;
+                  Link next = w.link.successor;
+                  previous(w);
+                  w.link.successor = next;
                   return element;
               }
               else
-                  throw new Overflow("Window is in the 'after last' position.");
+                  throw new OutOfBounds("Window is after the last element");
           }
           else
-              throw new Underflow("Window is in the 'before first' position.");
+              throw new OutOfBounds("Window is before the first element");
       }
       else
-          throw new Overflow("List is empty.");
+          throw new OutOfBounds("Linked list is empty.");
     }
 }
