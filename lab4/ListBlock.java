@@ -14,7 +14,7 @@ public class ListBlock<E>
      * Initialises an empty list with two associated window positions
      * before first and after last
     **/
-    public ListBlock<E>(int size)
+    public ListBlock(int size)
     {
         list = new Object[size];
         afterLast = 0;

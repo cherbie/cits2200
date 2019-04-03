@@ -10,7 +10,7 @@ public class ListLinked<E> implements CITS2200.List
     /**
      * Initialises an empty list.
     **/
-    public ListLinked<E>()
+    public ListLinked()
     {
         after = new Link(null, null);
         before = new Link(null, after); //linked to after
@@ -75,9 +75,7 @@ public class ListLinked<E> implements CITS2200.List
             w.link = w.link.successor; //next window position not deleting element
         }
         else
-        {
             throw new OutOfBounds("Window is past the end of the list.");
-        }
     }
 
     /**
@@ -109,19 +107,15 @@ public class ListLinked<E> implements CITS2200.List
     /**
      * Extra element is added to the ListBlock after the window
      * @param e Generic class
-     * @param w WindowBlock
+     * @param w WindowLinked
      * @throws OutOfBounds if the window is past the end of the list
     **/
-    public void insertAfter(E e, WindowBlock w) throws OutOfBounds
+    public void insertAfter(E e, WindowLinked w) throws OutOfBounds
     {
         if(!isAfterLast(w))
         {
-            for(int i = afterLast-1; i > w.index; i--)
-            {
-                list[i+1] = list[i];
-            }
-            list[w.index+1] = e;
-            afterLast++;
+            Link newItem = new Link(e, w.link.successor); //link points to previous window successor
+            w.link.successor = newItem;
         }
         else
             throw new OutOfBounds("Window is past the end of the list.");
@@ -130,20 +124,17 @@ public class ListLinked<E> implements CITS2200.List
     /**
      * An extra element is added to the list before the window
      * @param e Generic class
-     * @param w WindowBlock
+     * @param w WindowLinked
      * @throws OutOfBounds if the window is before the start of the list
     **/
-    public void insertBefore(E e, WindowBlock w) throws OutOfBounds
+    public void insertBefore(E e, WindowLinked w) throws OutOfBounds
     {
         if(!isBeforeFirst(w))
         {
-            for(int i = afterLast-1; i >= w.index; i--)
-            {
-                list[i+1] = list[i];
-            }
-            afterLast++;
-            list[w.index] = e;
-            w.index++;
+            Link currWindow = w.link;
+            w.previous(w);
+            insertAfter(e, w);
+            w.link = currWindow; //re-address starting window;
         }
         else
             throw new OutOfBounds("Window is before the start of the list");
@@ -163,7 +154,7 @@ public class ListLinked<E> implements CITS2200.List
             {
                 if(!isAfterLast(w))
                 {
-                    return w.link.item;
+                    return (E) w.link.item;
                 }
                 else
                     throw new OutOfBounds("Window is over the 'after last' position.");
