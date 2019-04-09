@@ -1,14 +1,24 @@
 import CITS2200.*;
+import java.util.*;
 
-public class BinTree extends BinaryTree<E>
+public class BinTree<E> extends BinaryTree<E>
 {
-    Object item;
-    BinaryTree leftTree;
-    BinaryTree rightTree;
+    private Object item;
+    private BinaryTree leftTree;
+    private BinaryTree rightTree;
 
     //CONSTRUCTORS
-    public BinTree() { super(); }
-    public BinTree(E item, BinaryTree<E> b1, BinaryTree<E> b2) {  super(item, b1, b2); }
+    /* Note: super() calls the constructor of the parent class */
+
+    public BinTree()
+    {
+        super();
+    }
+
+    public BinTree(E item, BinaryTree<E> b1, BinaryTree<E> b2)
+    {
+        super(item, b1, b2);
+    }
 
     /**
      * Tests whether the tree is equal to an Object
@@ -19,34 +29,89 @@ public class BinTree extends BinaryTree<E>
      * @return true if both trees are equal
      * @param o Object
     **/
-    public abstract boolean equals(Object o)
+    public boolean equals(Object o)
     {
-        else if(!(o instanceof CITS2200.BinaryTree) || o == null)
+        if(!(o instanceof CITS2200.BinaryTree) || o == null)
             return false; //Object is not a BinaryTree or child of binary tree.
-        else
-        {
-            //CHECK IF BOTH TREES ARE EMPTY (TRUE)
-            if(isEmpty() && o.isEmpty())
-                return true;
-            else
-            {
-                if(getItem() != o.getItem()) //CHECK IF BOTH TREES CONTAIN EQUAL ITEM AT THE ROOT
-                    return false;
-                if(!leftTree.equals( o.getLeft() )) //CHECK IF EQUAL LEFT SUBSTREES
-                    return false;
-                if(!rightTree.equals( o.getRight() )) //CHECK IF EQUAL RIGHT SUBTREES
-                    return false;
-                return true;
-            }
-        }
+        //CHECK IF BOTH TREES ARE EMPTY (TRUE)
+        if(this.isEmpty() && ((BinaryTree)o).isEmpty())
+            return true;
+        if(this.isEmpty() | ((BinaryTree)o).isEmpty())
+            return false;
+        if(this.getItem().equals( ((BinaryTree)o).getItem() )) //CHECK IF EQUAL LEFT SUBTREES
+              return this.getLeft().equals(((BinaryTree)o).getLeft())&& this.getRight().equals(((BinaryTree)o).getRight());
+        return false;
     }
 
     /**
-     * Provides an instance of CITS2200.Iterator
+     * Provides an instance of CITS2200.Iterator and
+     * traverse the tree enqueing every element
      * @return every element stored in the tree exactly once
     **/
-    public Iterator<E> iterator()
+    public QueueIterator<E> iterator()
     {
-
+        //preTransversal(this);
+        return new QueueIterator<E>();
     }
+
+    /**
+     * Transverses through binary tree using preTransversal
+     * @return E or the "leave"
+
+    public void preTransversal(BinaryTree b)
+    {
+        if(!b.isEmpty())
+        {
+            preTransversal(b.getLeft());
+            preTransversal(b.getRight());
+        }
+        else
+        {
+            list.add((E) b.getItem());
+            return;
+        }
+    }
+    */
+
+    //sub-class
+    private class QueueIterator<A> implements CITS2200.Iterator<A>
+    {
+        private LinkedList<BinaryTree<A>> l;
+
+        /**
+         * Constructor for the iterator implementing a Linked List ADT
+        **/
+        public QueueIterator()
+        {
+            l = new LinkedList<BinaryTree<A>>();
+            l.offer((BinaryTree<A>)BinTree.this);
+        }
+
+        /**
+         * Tests if there is a next item to return
+         * @return true if there is another element and false otherwise
+        **/
+        public boolean hasNext()
+        {
+            return l.peek() != null;
+        }
+
+        /**
+         * Moves the iterator to the next element
+         * @return the next element
+         * @throws OutOfBounds if there is no next element
+        **/
+        public A next() throws OutOfBounds
+        {
+            BinaryTree<A> ret = l.remove();
+            BinaryTree<A> left = ret.getLeft();
+            if(!left.isEmpty())
+                l.offer(left);
+            left = ret.getRight();
+            if(!left.isEmpty())
+                l.offer(left);
+            return ret.getItem();
+        }
+    }
+
 }
