@@ -34,12 +34,12 @@ public class BinTree<E> extends BinaryTree<E>
         if(!(o instanceof CITS2200.BinaryTree) || o == null)
             return false; //Object is not a BinaryTree or child of binary tree.
         //CHECK IF BOTH TREES ARE EMPTY (TRUE)
-        if(this.isEmpty() && ((BinaryTree)o).isEmpty())
+        if(this.isEmpty() && ((BinaryTree)o).isEmpty()) //special case
             return true;
         if(this.isEmpty() | ((BinaryTree)o).isEmpty())
             return false;
         if(this.getItem().equals( ((BinaryTree)o).getItem() )) //CHECK IF EQUAL LEFT SUBTREES
-              return this.getLeft().equals(((BinaryTree)o).getLeft())&& this.getRight().equals(((BinaryTree)o).getRight());
+              return this.getLeft().equals(((BinaryTree)o).getLeft()) && this.getRight().equals(((BinaryTree)o).getRight());
         return false;
     }
 
