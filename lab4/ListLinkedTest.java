@@ -63,7 +63,7 @@ public class ListLinkedTest
 
         list.insertAfter(values[count], window);
         list.next(window);
-        System.out.println("--insertAfter-- " + list.examine(window));
+        print("--insertAfter-- " + list.examine(window));
         list.previous(window);
         count++;
 				print("First insertAfter() call successful.");
@@ -71,8 +71,10 @@ public class ListLinkedTest
 
         list.insertAfter(values[count], window);
         list.next(window);
-        System.out.println("--insertAfter-- " + list.examine(window));
-        list.previous(window);
+        print("--insertAfter-- " + list.examine(window));
+        list.next(window);
+        print("--insertAfter-- " + list.examine(window));
+        list.beforeFirst(window);
         count++;
 				print("Second insertAfter() call successful.");
 

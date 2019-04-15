@@ -53,7 +53,18 @@ public class ListLinkedBefore implements CITS2200.List
     **/
     public void beforeFirst(WindowLinked w)
     {
-        w.link = before;
+        if(isEmpty())
+            w.link = before;
+        else
+        {
+            while(w.link != before)
+            {
+                Link prev = w.link.successor;
+                w.link.successor = before.successor; //point forward
+                before.successor = w.link; //update before successor pointer
+                w.link = prev; //move window back one
+            }
+        }
     }
 
     /**
@@ -62,7 +73,15 @@ public class ListLinkedBefore implements CITS2200.List
     **/
     public void afterLast(WindowLinked w)
     {
-        w.link = after;
+        if(isEmpty())
+            w.link = after;
+        else
+        {
+            while(w.link != after)
+            {
+                next(w);
+            }
+        }
     }
 
     /**
@@ -72,13 +91,13 @@ public class ListLinkedBefore implements CITS2200.List
     **/
     public void next(WindowLinked w) throws OutOfBounds
     {
-        if(!isAfterLast(w))
+        if(!isAfterLast(w) && !isEmpty())
         {
             Link prev = w.link; //previous window
-            w.link.successor = before.successor;
-            before.successor = w.link.successor.successor;
-            w.link = w.link.successor; //next window position not deleting element
-            w.link.successor = prev;
+            Link afternext = before.successor.successor;
+            before.successor.successor = w.link; //point next link backwardsbackwards
+            w.link = before.successor; //move window forward one
+            before.successor = afternext; //move before pointer forward one
         }
         else
             throw new OutOfBounds("next: bad input for window.");
@@ -110,7 +129,7 @@ public class ListLinkedBefore implements CITS2200.List
     **/
     public void insertAfter(Object e, WindowLinked w) throws OutOfBounds
     {
-        if(w.link.successor != null && !isAfterLast(w))
+        if(w.link != null && !isAfterLast(w))
         {
             Link next = new Link(e, before.successor); //link points to previous window successor
             before.successor = next;
