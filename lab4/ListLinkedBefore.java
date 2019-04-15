@@ -5,7 +5,7 @@ public class ListLinkedBefore implements CITS2200.List
     //FIELDS
     private Link before;
     private Link after;
-    private Link beforeAfter;
+    private int count; //keep track of emptiness
 
     //-------------- CONSTRUCTORS
     /**
@@ -15,7 +15,7 @@ public class ListLinkedBefore implements CITS2200.List
     {
         after = new Link(null, before);
         before = new Link(null, after); //linked to after
-        beforeAfter = before;
+        count = 0;
     }
 
     //-------------- CHECKERS
@@ -25,7 +25,7 @@ public class ListLinkedBefore implements CITS2200.List
     **/
     public boolean isEmpty()
     {
-        return before.successor == after;
+        return count <= 0;
     }
 
     /**
@@ -34,7 +34,7 @@ public class ListLinkedBefore implements CITS2200.List
     **/
     public boolean isBeforeFirst(WindowLinked w)
     {
-        return w.link == after;
+        return w.link == before;
     }
 
     /**
@@ -43,7 +43,7 @@ public class ListLinkedBefore implements CITS2200.List
      **/
     public boolean isAfterLast(WindowLinked w)
     {
-        return w.link == beforeAfter;
+        return w.link == after;
     }
 
     //--------- MANIPULATORS
@@ -53,7 +53,7 @@ public class ListLinkedBefore implements CITS2200.List
     **/
     public void beforeFirst(WindowLinked w)
     {
-        w.link = after;
+        w.link = before;
     }
 
     /**
@@ -62,7 +62,7 @@ public class ListLinkedBefore implements CITS2200.List
     **/
     public void afterLast(WindowLinked w)
     {
-        w.link = beforeAfter;
+        w.link = after;
     }
 
     /**
@@ -74,7 +74,11 @@ public class ListLinkedBefore implements CITS2200.List
     {
         if(!isAfterLast(w))
         {
+            Link prev = w.link; //previous window
+            w.link.successor = before.successor;
+            before.successor = w.link.successor.successor;
             w.link = w.link.successor; //next window position not deleting element
+            w.link.successor = prev;
         }
         else
             throw new OutOfBounds("next: bad input for window.");
@@ -89,14 +93,10 @@ public class ListLinkedBefore implements CITS2200.List
     {
         if(!isEmpty() && !isBeforeFirst(w))
         {
-            Link first = after; //first element in the list.
-            while(first.successor != w.link.successor)
-            {
-                first = first.successor;
-                if(first == after)
-                    throw new OutOfBounds("previous: could not navigate to previous element.");
-            }
-            w.link = first; //set window to the previous element.
+            Link window = w.link.successor;
+            w.link.successor = before.successor;
+            before.successor = w.link;
+            w.link = window;
         }
         else
             throw new OutOfBounds("previous: window is out of list.");
@@ -112,8 +112,9 @@ public class ListLinkedBefore implements CITS2200.List
     {
         if(w.link.successor != null && !isAfterLast(w))
         {
-            Link next = new Link(e, w.link.successor.successor); //link points to previous window successor
-            w.link.successor.successor = next;
+            Link next = new Link(e, before.successor); //link points to previous window successor
+            before.successor = next;
+            count++;
         }
         else
             throw new OutOfBounds("insert after: window is not in the list.");
@@ -131,8 +132,7 @@ public class ListLinkedBefore implements CITS2200.List
         {
             Link next = new Link(e, w.link.successor); //the current window;
             w.link.successor = next; //point new element to current window
-            if(w.link == beforeAfter)
-                after = next;
+            count++;
         }
         else
             throw new OutOfBounds("Window is before the start of the list");
@@ -148,7 +148,7 @@ public class ListLinkedBefore implements CITS2200.List
     {
         if(w.link != null && !isBeforeFirst(w) && !isAfterLast(w))
         {
-            return w.link.successor.item;
+            return w.link.item;
         }
         else
             throw new OutOfBounds("examine(): window is outside the list.");
@@ -166,8 +166,8 @@ public class ListLinkedBefore implements CITS2200.List
     {
         if(w.link != null && !isBeforeFirst(w) && !isAfterLast(w))
         {
-            Object element = w.link.successor.item;
-            w.link.successor.item = e;
+            Object element = w.link.item;
+            w.link.item = e;
             return element;
         }
         else
@@ -184,20 +184,17 @@ public class ListLinkedBefore implements CITS2200.List
     **/
     public Object delete(WindowLinked w) throws OutOfBounds
     {
-      if(w.link != null && !isBeforeFirst(w) && !isAfterLast(w))
-      {
-          if(after == w.link.successor.successor) //after is the next item after window
-          {
-              Object element = w.link.successor.item;
-              w.link.successor = after;
-              return element;
-          }
-          Object element = w.link.successor.item;
-          w.link.successor.item = w.link.successor.successor.item;
-          w.link.successor.successor = w.link.successor.successor.successor; // next item's successor
-          return element;
-      }
-      else
-          throw new OutOfBounds("delete(): window is outside of list.");
+        if(w.link != null && !isBeforeFirst(w) && !isAfterLast(w))
+        {
+            Object element = w.link.item;
+            Link afternext = before.successor.successor;
+            before.successor.successor = w.link.successor;
+            w.link = before.successor;
+            before.successor = afternext;
+            count--;
+            return element;
+        }
+        else
+            throw new OutOfBounds("delete(): window is outside of list.");
     }
 }
