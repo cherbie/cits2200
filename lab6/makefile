@@ -1,6 +1,6 @@
 cp = -cp CITS2200.jar:.
-Search : SearchImp.java CITS2200.jar
-	javac -cp CITS2200.jar:. SearchImp.java
+Search : SearchImp.java CITS2200.jar GraphTest.java 
+	javac -cp CITS2200.jar:. SearchImp.java GraphTest.java
 
-clear : 
+clear :
 	rm -f *.o

@@ -5,6 +5,7 @@ public class SearchImp implements CITS2200.Search
 {
     enum Colour { WHITE, GREY, BLACK;} //states of a vertex
 
+    public SearchImp(){ ;}
     /**
      * Runs a *BFS* on a given directed, unweighted graph.
      * @param g Graph to be searched
@@ -14,20 +15,20 @@ public class SearchImp implements CITS2200.Search
     **/
     public int[] getConnectedTree(Graph g, int startingvertex)
     {
+        //GRAPH INFORMATION
+        int[][] edgematrix = g.getEdgeMatrix();
+        int numvertices = g.getNumberOfVertices();
+        
         //BFS ADT's
         LinkedList q = new LinkedList(); //queue implementation
         Colour[] colour = setVertexColour(numvertices);
         int[] pi = initialiseParentArray(numvertices); //parent or predecessor array
 
-        //GRAPH INFORMATION
-        int[][] edgematrix = g.getEdgeMatrix();
-        int numvertices = g.getNumberofVertices();
-
         //BFS ALGORITHM
         q.add(startingvertex);
         while(q.peek() != null) //NOT EMPTY
         {
-            int w = q.remove(); //REMOVE FIRST ELEMENT IN THE QUEUE
+            int w = (int) q.remove(); //REMOVE FIRST ELEMENT IN THE QUEUE
             //FIND ADJACENT VERTICES TO w
             for(int x = 0; x < numvertices; x++)
             {
@@ -43,10 +44,16 @@ public class SearchImp implements CITS2200.Search
             }
             colour[w] = Colour.BLACK; //SET TO BLACK
         }
-
+        return pi;
     }
 
-    private static int[] intialiseParentArray(int size)
+    /**
+     * Initialise the parent array with values of -1 to indicate no established
+     * directional connections between vertices
+     * @param size of integer array
+     * @return int[] with values initialised to -1
+    **/
+    private static int[] initialiseParentArray(int size)
     {
         int[] a = new int[size];
         for(int i = 0; i < size; i++)
@@ -56,6 +63,11 @@ public class SearchImp implements CITS2200.Search
         return a;
     }
 
+    /**
+     * Sets the colour of all elements in an array to Colour.WHITE
+     * @return Colour[] with all elements coloured Colour.WHITE
+     * @param size integer size of array
+    **/
     private static Colour[] setVertexColour(int size)
     {
         Colour[] c = new Colour[size];
@@ -71,12 +83,12 @@ public class SearchImp implements CITS2200.Search
      * the start vertex
      * @param g the Graph to eb searched
      * @param startVertex the vertex on which to statr the search
-     * @result an array listing the parent of each vertex in the spann:ing tree,
+     * @return an array listing the parent of each vertex in the spann:ing tree,
      * or -1 is the vertex is not reachable from teh start vertex
     **/
     public int[] getDistances(Graph g, int startVertex)
     {
-        
+        return new int[1];
     }
     
     /**
@@ -89,6 +101,6 @@ public class SearchImp implements CITS2200.Search
     **/
     public int[][] getTimes(Graph g, int startVertex)
     {
-        
+        return new int[1][1];
     }
 }
