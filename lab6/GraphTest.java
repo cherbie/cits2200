@@ -22,21 +22,21 @@ public class GraphTest
     private static void testGraph1(Graph g, int numvertices)
     {
         SearchImp search = new SearchImp();
-        int[] parentarray = search.getConnectedTree(g, 6);
+        int[] parentarray = search.getConnectedTree(g, 4);
         printParentArray(parentarray);
 
         print("Parent + distance.");
 
-        int[] distance = search.getDistances(g, 6);
+        int[] distance = search.getDistances(g, 4);
         printDistanceArray(distance, parentarray);
     }
 
-    private static void printDistanceArray(int[] d, int[] p)
+    private static void printDistanceArray(int[] d,int[] p)
     {
         int len = d.length;
         for(int i = 0; i < len; i++)
         {
-            print(i + " --> " + p[i] + "\t distance = " + d[i]);
+            print(i + " --> " + p[i] + "\tdistance = " + d[i]);
         }
     }
     private static void printParentArray(int[] a)

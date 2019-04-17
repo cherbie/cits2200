@@ -12,19 +12,22 @@ public class SearchImp implements CITS2200.Search
      * @return an array listing the parent of each vertex in the spanning tree, or -1 is the vertex
      * is not reachable from the start vertex.
     **/
-    public int[] getConnectedTree(Graph g, int startingvertex)
+    public int[] getConnectedTree(Graph g, int startvertex) throws OutOfBounds
     {
         //GRAPH INFORMATION
         int[][] edgematrix = g.getEdgeMatrix();
         int numvertices = g.getNumberOfVertices();
         
+        if(startvertex < 0 || startvertex >= numvertices)
+            throw new OutOfBounds("starting vertex not an element of the set of vertices in graph g.");
+
         //BFS ADT's
         LinkedList q = new LinkedList(); //queue implementation
         Colour[] colour = setVertexColour(numvertices);
         int[] pi = initialiseParentArray(numvertices); //parent or predecessor array
 
         //BFS ALGORITHM
-        q.add(startingvertex);
+        q.add(startvertex);
         while(q.peek() != null) //NOT EMPTY
         {
             int w = (int) q.remove(); //REMOVE FIRST ELEMENT IN THE QUEUE
@@ -85,16 +88,19 @@ public class SearchImp implements CITS2200.Search
      * @return an array listing the distance of each vertex in the spanning tree,
      * or -1 is the vertex is not reachable from the start vertex
     **/
-    public int[] getDistances(Graph g, int startvertex)
+    public int[] getDistances(Graph g, int startvertex) throws OutOfBounds
     {
         //GRAPH INFORMATION
         int[][] edgematrix = g.getEdgeMatrix();
         int numvertices = g.getNumberOfVertices();
         
+        if(startvertex < 0 || startvertex >= numvertices)
+            throw new OutOfBounds("starting vertex not an element of the set of vertices in graph g.");
+        
         //BFS ADT's
         LinkedList q = new LinkedList(); //queue implementation
         Colour[] colour = setVertexColour(numvertices);
-        int[] pi = initialiseParentArray(numvertices); //pd[i][0] = parent array | pd[i][1] = distance
+        //int[] pi = initialiseParentArray(numvertices); //pd[i][0] = parent array | pd[i][1] = distance
         int[] dist = new int[numvertices];
 
         //BFS ALGORITHM
@@ -110,7 +116,7 @@ public class SearchImp implements CITS2200.Search
                     if(colour[x] == Colour.WHITE) //WHITE
                     {
                         dist[x] = dist[w] + 1; //distance to w +1
-                        pi[x] = w; //parent
+                        //pi[x] = w; //parent
                         colour[x] = Colour.GREY; //SET TO GREY
                         q.add(x);
                     }
@@ -132,7 +138,7 @@ public class SearchImp implements CITS2200.Search
     }
     
     /**
-     * Runs a *DFS on a given directed, unweighted graph to find the start time and finish time
+     * Runs a *DFS* on a given directed, unweighted graph to find the start time and finish time
      * for each vertex.
      * @param g the Graph to be searched
      * @param startVertex the vertex on which to start the search
@@ -141,6 +147,8 @@ public class SearchImp implements CITS2200.Search
     **/
     public int[][] getTimes(Graph g, int startVertex)
     {
+        //LocalTime t = new LocalTime();
+        //t.now();
         return new int[1][1];
     }
 }
