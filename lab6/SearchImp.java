@@ -5,7 +5,6 @@ public class SearchImp implements CITS2200.Search
 {
     enum Colour { WHITE, GREY, BLACK;} //states of a vertex
 
-    public SearchImp(){ ;}
     /**
      * Runs a *BFS* on a given directed, unweighted graph.
      * @param g Graph to be searched
@@ -81,14 +80,55 @@ public class SearchImp implements CITS2200.Search
     /**
      * Runs a *BFS* on a given directed, unweighted graph to find the distances of vertices from
      * the start vertex
-     * @param g the Graph to eb searched
-     * @param startVertex the vertex on which to statr the search
-     * @return an array listing the parent of each vertex in the spann:ing tree,
-     * or -1 is the vertex is not reachable from teh start vertex
+     * @param g the Graph to be searched
+     * @param startVertex the vertex on which to start the search
+     * @return an array listing the distance of each vertex in the spanning tree,
+     * or -1 is the vertex is not reachable from the start vertex
     **/
-    public int[] getDistances(Graph g, int startVertex)
+    public int[] getDistances(Graph g, int startvertex)
     {
-        return new int[1];
+        //GRAPH INFORMATION
+        int[][] edgematrix = g.getEdgeMatrix();
+        int numvertices = g.getNumberOfVertices();
+        
+        //BFS ADT's
+        LinkedList q = new LinkedList(); //queue implementation
+        Colour[] colour = setVertexColour(numvertices);
+        int[] pi = initialiseParentArray(numvertices); //pd[i][0] = parent array | pd[i][1] = distance
+        int[] dist = new int[numvertices];
+
+        //BFS ALGORITHM
+        q.add(startvertex);
+        while(q.peek() != null) //NOT EMPTY
+        {
+            int w = (int) q.remove(); //REMOVE FIRST ELEMENT IN THE QUEUE
+            //FIND ADJACENT VERTICES TO w
+            for(int x = 0; x < numvertices; x++)
+            {
+                if(edgematrix[w][x] == 1) //CONNECTED OR "CHILD" OF w
+                {
+                    if(colour[x] == Colour.WHITE) //WHITE
+                    {
+                        dist[x] = dist[w] + 1; //distance to w +1
+                        pi[x] = w; //parent
+                        colour[x] = Colour.GREY; //SET TO GREY
+                        q.add(x);
+                    }
+                }
+            }
+            colour[w] = Colour.BLACK; //SET TO BLACK
+        }
+        return dist;
+    }
+
+    private static int[][] initialiseParDisArray(int size)
+    {
+        int[][] a = new int[size][2];
+        for(int i = 0; i < size; i++)
+        {
+            a[i][0] = -1;
+        }
+        return a;
     }
     
     /**

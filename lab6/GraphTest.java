@@ -24,8 +24,21 @@ public class GraphTest
         SearchImp search = new SearchImp();
         int[] parentarray = search.getConnectedTree(g, 6);
         printParentArray(parentarray);
+
+        print("Parent + distance.");
+
+        int[] distance = search.getDistances(g, 6);
+        printDistanceArray(distance, parentarray);
     }
 
+    private static void printDistanceArray(int[] d, int[] p)
+    {
+        int len = d.length;
+        for(int i = 0; i < len; i++)
+        {
+            print(i + " --> " + p[i] + "\t distance = " + d[i]);
+        }
+    }
     private static void printParentArray(int[] a)
     {
         int len = a.length;
