@@ -3,7 +3,7 @@ import java.util.LinkedList; //java implementation of queue
 
 public class SearchImp implements CITS2200.Search
 {
-    enum Colour { WHITE, GREY, BLACK;} //states of a vertex
+    enum Colour { WHITE, GREY, BLACK;} //colours representing the states of a vertex
 
     /**
      * Runs a *BFS* on a given directed, unweighted graph.
@@ -46,7 +46,7 @@ public class SearchImp implements CITS2200.Search
     {
         DFSImp dfs = new DFSImp(g); //create abstract DFS class
         dfs.DFS(startvertex);
-        return dfs.times;
+        return dfs.printTimesArray();
     }
 
     public class BFSImp //ADT implementing the Breadth-First Search (BFS) Algorithm
@@ -65,7 +65,7 @@ public class SearchImp implements CITS2200.Search
          * Constructor for an abstract data type that performs a BFS on a
          * directed, unweighted graph recording the parent of each vertices
          * and the distance from the starting vertex.
-         */
+        **/
         public BFSImp(Graph g)
         {
             this.g = g;
@@ -181,7 +181,6 @@ public class SearchImp implements CITS2200.Search
     public class DFSImp //ADT implementing the Depth-First Search (DFS) Algorithm
     {
         //PUBLIC FIELDS
-        public int[][] times; //discovery and finish times of parent vertices
         
         //PRIVATE FIELDS
         private int time; //abstract time
@@ -189,12 +188,14 @@ public class SearchImp implements CITS2200.Search
         private int[][] edgematrix;
         private int numvertices;
         private Graph g;
+        private int[][] times; //discovery and finish times of parent vertices
+
 
         /**
          * Constructor an abstract data type that performs a DFS on a
          * directed, unweighted graph recording the discovery and finish times
          * of each parent vertex.
-         */
+        **/
         public DFSImp(Graph g)
         {
             this.g = g;
@@ -236,6 +237,11 @@ public class SearchImp implements CITS2200.Search
                 c[i] = Colour.WHITE;
             }
             return c;
+        }
+
+        public int[][] printTimesArray()
+        {
+            return times;
         }
     }
 }

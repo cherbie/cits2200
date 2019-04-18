@@ -8,7 +8,7 @@ public class GraphTest
     public static void main(String[] args)
     {
         Graph g1 = Graph.randomGraph(nvertex, true, density); //unweighted, directed graph
-        infoGraph1(g1, nvertex); //display information about the unweighted, directed graph
+        //infoGraph1(g1, nvertex); //display information about the unweighted, directed graph
         testGraph1(g1, nvertex); //perform test and print out the parent nodes of the spanning tree
 
     }
