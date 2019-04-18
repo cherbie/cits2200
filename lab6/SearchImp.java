@@ -127,7 +127,7 @@ public class SearchImp implements CITS2200.Search
         return dist;
     }
 
-    private static int[][] iniDistanceArray(int size)
+    private static int[][] iniDistancesArray(int size)
     {
         int[][] a = new int[size][2];
         for(int i = 0; i < size; i++)
@@ -145,10 +145,69 @@ public class SearchImp implements CITS2200.Search
      * @return a 2-dimensional array, where each sub-array has two elements:
      * the first is the start time, the second is the end time.
     **/
-    public int[][] getTimes(Graph g, int startVertex)
+    public int[][] getTimes(Graph g, int startvertex)
     {
-        //LocalTime t = new LocalTime();
-        //t.now();
-        return new int[1][1];
+        DFSTime dfs = new DFSTime(g); //create abstract DFS class
+        dfs.DFS(startvertex);
+        return dfs.times;
+    }
+
+    public class DFSTime
+    {
+        //PUBLIC FIELDS
+        public int[][] times; //discovery and finish times of parent vertices
+        
+        //PRIVATE FIELDS
+        private int time; //abstract time
+        private Colour[] colour;
+        private int[][] edgematrix;
+        private int numvertices;
+
+        /**
+         * Constructor an abstract data type that performs a DFS on a
+         * directed, unweighted graph recording the discovery and finish times
+         * of each parent vertex.
+         */
+        public DFSTime(Graph g)
+        {
+            numvertices = g.getNumberOfVertices();
+            edgematrix = g.getEdgeMatrix();
+            times = new int[numvertices][2];
+            colour = setVertexColour(numvertices);
+            time = 0;
+        }
+
+        /**
+         * Recursive DFS alorithm logging the discovery and finishing times
+         * of each parent vertex in the public field DFSTime.times.
+         * @param w int representing the parent vertex underexamination
+         * @throws OutOfBounds if w exceeds the bounds [0, numberofgraphvertices)
+        **/
+        public void DFS(int w) throws OutOfBounds
+        {
+            if(w < 0 || w >= numvertices)
+                throw new OutOfBounds("DFS: vertex not an element of the set of vertices in graph g.");
+            colour[w] = Colour.GREY;
+            times[w][0] = time; //discovery time;
+            ++time;
+            for(int x = 0; x < numvertices; x++)
+            {
+                if(colour[x] == Colour.WHITE)
+                    DFS(x);
+            }
+            colour[w] = Colour.BLACK;
+            times[w][1] = time;
+            ++time;
+        }
+
+        private Colour[] setVertexColour(int size)
+        {
+            Colour[] c = new Colour[size];
+            for(int i = 0; i < size; i++)
+            {
+                c[i] = Colour.WHITE;
+            }
+            return c;
+        }
     }
 }

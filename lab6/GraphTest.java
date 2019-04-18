@@ -29,6 +29,18 @@ public class GraphTest
 
         int[] distance = search.getDistances(g, 4);
         printDistanceArray(distance, parentarray);
+
+        int[][] times = search.getTimes(g, 4);
+        printTimesArray(times, parentarray);
+    }
+
+    private static void printTimesArray(int[][] tarr, int[] parr)
+    {
+        int len = parr.length;
+        for(int i = 0; i < len; i++)
+        {
+            print(i + " --> " + parr[i] + "\tdiscovery = " + tarr[i][0] + "\tfinish = " + tarr[i][1]);
+        }
     }
 
     private static void printDistanceArray(int[] d,int[] p)
