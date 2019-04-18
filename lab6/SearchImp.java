@@ -59,6 +59,7 @@ public class SearchImp implements CITS2200.Search
         private int[][] edgematrix;
         private int[] pi;
         private int[] distance;
+        private Graph g;
 
         /**
          * Constructor for an abstract data type that performs a BFS on a
@@ -67,11 +68,12 @@ public class SearchImp implements CITS2200.Search
          */
         public BFSImp(Graph g)
         {
-            numvertices = g.getNumberOfVertices();
-            edgematrix = g.getEdgeMatrix();
-            colour = setVertexColour(numvertices);
-            pi = iniParentArray(numvertices);
-            distance = new int[numvertices];
+            this.g = g;
+            this.numvertices = g.getNumberOfVertices();
+            this.edgematrix = g.getEdgeMatrix();
+            this.colour = setVertexColour(numvertices);
+            this.pi = iniParentArray(numvertices);
+            this.distance = iniDistanceArray(numvertices);
         }
 
         /**
@@ -87,6 +89,7 @@ public class SearchImp implements CITS2200.Search
 
             
             LinkedList q = new LinkedList(); //queue implementation
+            distance[startvertex] = 0; //root vertex
 
             //BFS ALGORITHM
             q.add(startvertex);
@@ -96,11 +99,12 @@ public class SearchImp implements CITS2200.Search
                 //FIND ADJACENT VERTICES TO w
                 for(int x = 0; x < numvertices; x++)
                 {
-                    if(edgematrix[w][x] == 1) //CONNECTED OR "CHILD" OF w
+                    if(g.getWeight(w, x) >= 1) //CONNECTED OR "CHILD" OF w
                     {
                         if(colour[x] == Colour.WHITE) //WHITE
                         {
-                            distance[x] = distance[w] + 1; //distance to w +1
+                            if(x == w) continue; //non-cyclical
+                            distance[x] = distance[w] + 1;
                             pi[x] = w; //parent
                             colour[x] = Colour.GREY; //SET TO GREY
                             q.add(x);
@@ -145,6 +149,20 @@ public class SearchImp implements CITS2200.Search
         }
 
         /**
+        * Initialise the distance array with values of -1 to indicate no established
+        * directional connections between vertices
+        * @param size of integer array
+        * @return int[] with values initialised to -1
+        **/
+        private int[] iniDistanceArray(int size)
+        {
+            int[] a = new int[size];
+            for(int i = 0; i < size; i++)
+                a[i] = -1;
+            return a;
+        }
+
+        /**
          * Initialises the colour of the vertices to Colour.WHITE
          * @return the array of Colours for each vertices Colour[].
          */
@@ -170,6 +188,7 @@ public class SearchImp implements CITS2200.Search
         private Colour[] colour;
         private int[][] edgematrix;
         private int numvertices;
+        private Graph g;
 
         /**
          * Constructor an abstract data type that performs a DFS on a
@@ -178,11 +197,12 @@ public class SearchImp implements CITS2200.Search
          */
         public DFSImp(Graph g)
         {
-            numvertices = g.getNumberOfVertices();
-            edgematrix = g.getEdgeMatrix();
-            times = new int[numvertices][2];
-            colour = setVertexColour(numvertices);
-            time = 0;
+            this.g = g;
+            this.numvertices = g.getNumberOfVertices();
+            this.edgematrix = g.getEdgeMatrix();
+            this.times = new int[numvertices][2];
+            this.colour = setVertexColour(numvertices);
+            this.time = 0;
         }
 
         /**

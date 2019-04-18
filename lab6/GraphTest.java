@@ -2,11 +2,14 @@ import CITS2200.*;
 
 public class GraphTest
 {
+    private static final int nvertex = 500;
+    private static final double density = 0.03;
+
     public static void main(String[] args)
     {
-        Graph g1 = Graph.randomGraph(8, true, 0.5); //unweighted, directed graph
-        infoGraph1(g1, 8); //display information about the unweighted, directed graph
-        testGraph1(g1, 8); //perform test and print out the parent nodes of the spanning tree
+        Graph g1 = Graph.randomGraph(nvertex, true, density); //unweighted, directed graph
+        infoGraph1(g1, nvertex); //display information about the unweighted, directed graph
+        testGraph1(g1, nvertex); //perform test and print out the parent nodes of the spanning tree
 
     }
 
