@@ -24,7 +24,7 @@ public class SearchImp implements CITS2200.Search
         //BFS ADT's
         LinkedList q = new LinkedList(); //queue implementation
         Colour[] colour = setVertexColour(numvertices);
-        int[] pi = initialiseParentArray(numvertices); //parent or predecessor array
+        int[] pi = iniParentArray(numvertices); //parent or predecessor array
 
         //BFS ALGORITHM
         q.add(startvertex);
@@ -55,7 +55,7 @@ public class SearchImp implements CITS2200.Search
      * @param size of integer array
      * @return int[] with values initialised to -1
     **/
-    private static int[] initialiseParentArray(int size)
+    private static int[] iniParentArray(int size)
     {
         int[] a = new int[size];
         for(int i = 0; i < size; i++)
@@ -100,7 +100,7 @@ public class SearchImp implements CITS2200.Search
         //BFS ADT's
         LinkedList q = new LinkedList(); //queue implementation
         Colour[] colour = setVertexColour(numvertices);
-        //int[] pi = initialiseParentArray(numvertices); //pd[i][0] = parent array | pd[i][1] = distance
+        //int[] pi = iniParentArray(numvertices); //pd[i][0] = parent array | pd[i][1] = distance
         int[] dist = new int[numvertices];
 
         //BFS ALGORITHM
@@ -127,7 +127,7 @@ public class SearchImp implements CITS2200.Search
         return dist;
     }
 
-    private static int[][] initialiseParDisArray(int size)
+    private static int[][] iniDistanceArray(int size)
     {
         int[][] a = new int[size][2];
         for(int i = 0; i < size; i++)
