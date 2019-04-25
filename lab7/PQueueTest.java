@@ -4,7 +4,7 @@ public class PQueueTest
 {
     private static Object[] arr;
     private static int size;
-    private static PQueueLinked pq;
+    private static PriorityQueueLinked pq;
     private static int count;
 
     public static void main(String[] args)
@@ -14,7 +14,7 @@ public class PQueueTest
         
         size = Integer.parseInt(args[0]);
         arr = new Object[size];
-        pq = new PQueueLinked<String>();
+        pq = new PriorityQueueLinked<String>();
 
         try
         {

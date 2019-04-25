@@ -1,14 +1,14 @@
 import CITS2200.*;
 import java.util.LinkedList;
 
-public class PQueueLinked<E> implements CITS2200.PriorityQueue<E>
+public class PriorityQueueLinked<E> implements CITS2200.PriorityQueue<E>
 {
     private Link<E> front;
     /**
      * Constructor for implementation of CITS2200.PriorityQueueLinked
      * Empty priority queue created.
      */
-    public PQueueLinked()
+    public PriorityQueueLinked()
     {
         this.front = null;
     }
