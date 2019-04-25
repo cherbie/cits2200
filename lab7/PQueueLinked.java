@@ -1,6 +1,7 @@
 import CITS2200.*;
+import java.util.LinkedList;
 
-public class PQueueLinked<E> implements CITS2200.PriorityQueueLinked<E>
+public class PQueueLinked<E> implements CITS2200.PriorityQueue<E>
 {
     private Link<E> front;
     /**
@@ -38,11 +39,11 @@ public class PQueueLinked<E> implements CITS2200.PriorityQueueLinked<E>
         else
         {
             Link<E> window = front;
-            while( window.next != null || window.next.priority >= p )
+            while( window.next != null && window.next.priority >= p )
             {
                 window = window.next;
             }
-            window.next = new Link(a, p, null); //insert Link at the end
+            window.next = new Link(a, p, window.next); //insert Link at the end
         }
     }
 
@@ -77,8 +78,45 @@ public class PQueueLinked<E> implements CITS2200.PriorityQueueLinked<E>
      * Return a DAT.iterator to examine all the elements in the priority queue
      * @return an iterator pointing to before the first item
      */
-    public Iterator iterator()
+    public Iterator<E> iterator()
     {
+        LinkedList ll = new LinkedList();
+        Link<E> link = front;
+        while(link != null)
+        {
+            ll.add(link.element);
+            link = link.next; 
+        }
+        return new PQueueIterator<E>(ll);
+    }
 
+    public class PQueueIterator<A> implements CITS2200.Iterator<A>
+    {
+        private LinkedList list;
+
+        PQueueIterator(LinkedList l)
+        {
+            this.list = l;
+        }
+        /**
+         * Tests if there is a next item to return
+         * @return true if and only if there is a next item 
+         */
+        public boolean hasNext()
+        {
+            return list.peek() != null;
+        }
+
+        /**
+         * Returns the next element and movees the iterator to the next position
+         * @return the next element in the collection
+         * @throws OutOfBounds if there is no next element
+         */
+        public A next() throws OutOfBounds
+        {
+            if(!this.hasNext())
+                throw new OutOfBounds("next: queue is empty.");
+            return (A) list.remove();
+        }
     }
 }
