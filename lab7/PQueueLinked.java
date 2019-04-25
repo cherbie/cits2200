@@ -1,14 +1,15 @@
 import CITS2200.*;
 
-public class PriorityQueueLinked<E> implements CITS2200.PriorityQueueLinked<E>
+public class PQueueLinked<E> implements CITS2200.PriorityQueueLinked<E>
 {
-
+    private Link<E> front;
     /**
      * Constructor for implementation of CITS2200.PriorityQueueLinked
+     * Empty priority queue created.
      */
-    public PriorityQueueLinked()
+    public PQueueLinked()
     {
-
+        this.front = null;
     }
 
     /**
@@ -17,18 +18,32 @@ public class PriorityQueueLinked<E> implements CITS2200.PriorityQueueLinked<E>
      */
     public boolean isEmpty()
     {
-
+        return front == null;
     }
 
     /**
      * Insert an item at the back into the queue with a given priority
      * @param a the item to insert
-     * @param priority the priority of the elements
+     * @param priority the priority of the elements ( > 0 )
      * @throws IllegalValue if the priority is not in a valid range
      */
-    public void enqueue(E a, int priority) throws IllegalValue
+    public void enqueue(E a, int p) throws IllegalValue
     {
-
+        if(p < 0)
+            throw new IllegalValue("enqueue: priority value is less than 0");
+        else if( isEmpty() || p > front.priority)
+        {
+            front = new Link(a, p, front);
+        }
+        else
+        {
+            Link<E> window = front;
+            while( window.next != null || window.next.priority >= p )
+            {
+                window = window.next;
+            }
+            window.next = new Link(a, p, null); //insert Link at the end
+        }
     }
 
     /**
@@ -39,7 +54,9 @@ public class PriorityQueueLinked<E> implements CITS2200.PriorityQueueLinked<E>
      */
     public E examine() throws Underflow
     {
-
+        if(isEmpty())
+            throw new Underflow("examine: p-queue is empty.");
+        return front.element;
     }
 
     /**
@@ -49,7 +66,11 @@ public class PriorityQueueLinked<E> implements CITS2200.PriorityQueueLinked<E>
      */
     public E dequeue() throws Underflow
     {
-
+        if(isEmpty())
+            throw new Underflow("dequeue: p-queue is empty.");
+        E temp = (E) front.element;
+        front = front.next;
+        return temp;
     }
 
     /**
