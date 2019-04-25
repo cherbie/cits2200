@@ -46,7 +46,7 @@ public class SearchImp implements CITS2200.Search
     {
         DFSImp dfs = new DFSImp(g); //create abstract DFS class
         dfs.DFS(startvertex);
-        return dfs.printTimesArray();
+        return dfs.getTimesArray();
     }
 
     public class BFSImp //ADT implementing the Breadth-First Search (BFS) Algorithm
@@ -239,7 +239,7 @@ public class SearchImp implements CITS2200.Search
             return c;
         }
 
-        public int[][] printTimesArray()
+        public int[][] getTimesArray()
         {
             return times;
         }
