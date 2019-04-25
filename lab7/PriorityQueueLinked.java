@@ -119,4 +119,18 @@ public class PriorityQueueLinked<E> implements CITS2200.PriorityQueue<E>
             return (A) list.remove();
         }
     }
+
+    public class Link<E>
+    {
+        public E element;
+        public int priority;
+        public Link<E> next;
+
+        public Link(E e, int p, Link<E> n)
+        {
+            this.element = e;
+            this.priority = p;
+            this.next = n;
+        }
+    }
 }
