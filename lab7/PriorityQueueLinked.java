@@ -1,5 +1,4 @@
 import CITS2200.*;
-import java.util.LinkedList;
 
 public class PriorityQueueLinked<E> implements CITS2200.PriorityQueue<E>
 {
@@ -30,11 +29,9 @@ public class PriorityQueueLinked<E> implements CITS2200.PriorityQueue<E>
      */
     public void enqueue(E a, int p) throws IllegalValue
     {
-        if(p < 0)
-            throw new IllegalValue("enqueue: priority value is less than 0");
-        else if( isEmpty() || p > front.priority)
+        if( isEmpty() || p > front.priority)
         {
-            front = new Link(a, p, front);
+            front = new Link<E>(a, p, front);
         }
         else
         {
@@ -80,31 +77,25 @@ public class PriorityQueueLinked<E> implements CITS2200.PriorityQueue<E>
      */
     public Iterator<E> iterator()
     {
-        LinkedList ll = new LinkedList();
-        Link<E> link = front;
-        while(link != null)
-        {
-            ll.add(link.element);
-            link = link.next; 
-        }
-        return new PQueueIterator<E>(ll);
+        return new PQueueIterator<E>();
     }
 
     public class PQueueIterator<A> implements CITS2200.Iterator<A>
     {
-        private LinkedList list;
+        private Link<E> current;
 
-        PQueueIterator(LinkedList l)
+        public PQueueIterator()
         {
-            this.list = l;
+            current = PriorityQueueLinked.this.front;
         }
+
         /**
          * Tests if there is a next item to return
          * @return true if and only if there is a next item 
          */
         public boolean hasNext()
         {
-            return list.peek() != null;
+            return current != null;
         }
 
         /**
@@ -116,7 +107,9 @@ public class PriorityQueueLinked<E> implements CITS2200.PriorityQueue<E>
         {
             if(!this.hasNext())
                 throw new OutOfBounds("next: queue is empty.");
-            return (A) list.remove();
+            A temp = (A) current.element;
+            current = current.next;
+            return temp;
         }
     }
 
@@ -126,6 +119,9 @@ public class PriorityQueueLinked<E> implements CITS2200.PriorityQueue<E>
         public int priority;
         public Link<E> next;
 
+        /**
+         * Constructor for Link including priorities.
+         */
         public Link(E e, int p, Link<E> n)
         {
             this.element = e;

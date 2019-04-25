@@ -8,3 +8,6 @@ QueueLinked : QueueLinked.java QueueLinkedTest.java CITS2200.jar
 
 DequeCyclic : DequeCyclic.java DequeCyclicTest.java
 	javac $(cp) DequeCyclic.java DequeCyclicTest.java
+
+clear :
+	rm -f *.class

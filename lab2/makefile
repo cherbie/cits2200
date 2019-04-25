@@ -5,3 +5,6 @@ StackBlock : StackBlock.java CITS2200.jar StackBlockTest.java
 
 StackLinked : StackLinked.java Link.java CITS2200.jar StackLinkedTest.java
 	javac $(cp) StackLinked.java Link.java StackLinkedTest.java
+
+clear :
+	rm -f *.class

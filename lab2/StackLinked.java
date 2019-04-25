@@ -2,7 +2,7 @@ import CITS2200.*;
 
 class StackLinked implements CITS2200.Stack
 {
-    private Link first; //top most element in the linked stack
+    private CITS2200.Link first; //top most element in the linked stack
 
     /**
      * Constructs a new empty StackLinked Object
@@ -27,13 +27,13 @@ class StackLinked implements CITS2200.Stack
      **/
     public void push(Object c)
     {
-        Link n = new Link(c, first); //create new link object
+        CITS2200.Link n = new CITS2200.Link(c, first); //create new link object
         first = n;
     }
 
     /**
      * Examines the top of the stack.
-     * @return Object at the top of the stack.
+     * @return Object at the top of the stack.q
      **/
      public Object examine()
      {
