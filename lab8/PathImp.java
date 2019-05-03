@@ -21,7 +21,6 @@ public class PathImp implements CITS2200.Path
         } 
         catch (Exception e)
         {
-            System.out.println("exception: " + e.getMessage());
             return -1;
         }
     }
@@ -82,21 +81,22 @@ public class PathImp implements CITS2200.Path
         public int minSpanningTree()
         {
             PriorityQueueLinked p_queue = new PriorityQueueLinked();
-            this.initPriorityQueue(p_queue, vertices);
+            //this.initPriorityQueue(p_queue, vertices);
 
             mst.setNodeKey(0, 0); //set root node key value to zero
             int node, x; //current "window" of node being considered
             int sum = 0; //running sum of weighted MST
+
+            p_queue.enqueue(0, 0);
 
             while(!p_queue.isEmpty()) //not all elements have been visit
             {
                 node = (int) p_queue.dequeue(); //dequeue vertex 0 --> marked as seen
 
                 if(mst.nodeVisited(node)) continue; //if already visited skip.
-
+                System.out.println("sum:\t" + sum + "node:\t" + node + "val:\t" + mst.getNodeKey(node));
                 mst.setNodeVisited(node, 1);
                 sum += (int) mst.getNodeKey(node); //increment mininum spanning tree weight
-                System.out.println("sum - > " + sum + " node = " + node + " val = " + mst.getNodeKey(node));
                 for(x = 0; x < vertices; x++)
                 {
                     if(!mst.nodeVisited(x)) //not visited
@@ -128,7 +128,6 @@ public class PathImp implements CITS2200.Path
          */
         private void initPriorityQueue(PriorityQueueLinked p, int v)
         {
-            System.out.println("large val = " + this.LARGE_VALUE);
             for(int i = 1; i < v; i++)
             {
                 p.enqueue(i, this.LARGE_VALUE);
