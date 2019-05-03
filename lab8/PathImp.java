@@ -16,7 +16,7 @@ public class PathImp implements CITS2200.Path
     {
         try 
         {
-            PrimImp prim = new PrimImp(g);
+            PrimImp prim = new PrimImp(g);ß
             return prim.minSpanningTree();
         } 
         catch (Exception e)
