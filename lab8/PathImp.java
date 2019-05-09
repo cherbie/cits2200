@@ -14,15 +14,8 @@ public class PathImp implements CITS2200.Path
      */
     public int getMinSpanningTree(Graph g)
     {
-        try 
-        {
-            PrimImp prim = new PrimImp(g);ß
-            return prim.minSpanningTree();
-        } 
-        catch (Exception e)
-        {
-            return -1;
-        }
+        MSTImp imp = new MSTImp(g);
+        return imp.mst.getMSTWeight();
     }
 
      /**
@@ -34,32 +27,35 @@ public class PathImp implements CITS2200.Path
      */
      public int[] getShortestPaths(Graph g, int vertex)
      {
-         return new int[10];
+        MSTImp imp = new MSTImp(g);
+        return imp.mst.getShortestPaths();
      }
 
 /* ------------------------------------------- */
 
-
 /* ------------------------------------------- */
 
-    public class PrimImp
+    public class MSTImp
     {
         private Graph graph;
         private int vertices; //number of vertices
         public static final int LARGE_VALUE = 999;
-        private MST mst;
+        public MST mst;
 
         /**
          * Contructor for the Prim Algorithm implementation of MST
          * @throws IllegalValue when the graph is directed or not weighted
          */
-        public PrimImp(Graph g) throws IllegalValue
+        public MSTImp(Graph g)
         {
             this.graph = g;
             this.vertices = g.getNumberOfVertices();
             this.mst = new MST(vertices); //construct empty minimum spanning tree
-            if(!isValid())
-                throw new IllegalValue("PrimImp: Graph neededs to be weighted & undirected.");
+
+            minSpanningTree();
+            /*if(!isValid())
+                throw new IllegalValue("MSTImp: Graph neededs to be weighted & undirected.");
+            */
         }
         
         /**
@@ -78,7 +74,7 @@ public class PathImp implements CITS2200.Path
          * @return int the weight of the minimum spanning tree, or -1 if no minimum spanning tree can be found.
          * @return the weight of the minimum spanning tree, or -1 if there is no spanning tree.
          */
-        public int minSpanningTree()
+        private void minSpanningTree()
         {
             PriorityQueueLinked p_queue = new PriorityQueueLinked();
             //this.initPriorityQueue(p_queue, vertices);
@@ -88,6 +84,7 @@ public class PathImp implements CITS2200.Path
             int sum = 0; //running sum of weighted MST
 
             p_queue.enqueue(0, 0);
+            mst.setShortestPath(0, 0); //shortest path to root node is 0
 
             while(!p_queue.isEmpty()) //not all elements have been visit
             {
@@ -108,15 +105,16 @@ public class PathImp implements CITS2200.Path
                             mst.setNodeParent(x, node);
                             p_queue.enqueue(x, weight);
                         }
+                        if(mst.getShortestPath(x) > (sum + weight) && weight > 0) //new shortest path
+                                mst.setShortestPath(x, sum + weight);
                     }
                 }
             }
-
             if(sum <= 0) 
             {
-                return -1; //indicate no minimum spanning tree present
+                mst.setMSTWeight(-1); //indicate no minimum spanning tree present
             }
-            return sum;
+            mst.setMSTWeight(sum);
         }
 
         /**
@@ -140,7 +138,10 @@ public class PathImp implements CITS2200.Path
 
     public class MST
     {
-        public int[][] nodes; //storing node information.
+        private int[][] nodes; //storing node information.
+        private int[] shortestPaths;
+        private int mstWeight;
+
 
         /**
          * Constructor of minimum spanning tree ADT
@@ -148,14 +149,32 @@ public class PathImp implements CITS2200.Path
         public MST(int V)
         {
             nodes = new int[V][3];
+            shortestPaths = new int[V];
+            mstWeight = 0;
+
             for(int i = 0; i < V; i++)
             {
                 this.setNodeParent(i, -1); //undefined parent
-                this.setNodeKey(i, PrimImp.LARGE_VALUE);
+                this.setNodeKey(i, MSTImp.LARGE_VALUE);
+                this.setShortestPath(i, MSTImp.LARGE_VALUE);
                 this.setNodeVisited(i, -1);
             }
         }
 
+        /**
+         * Set the minimum spanning trees weight
+         */
+        public void setMSTWeight(int val) 
+        {
+            mstWeight = val;
+        }
+
+        /**
+         *
+        */
+        public int getMSTWeight() {
+            return mstWeight;
+        }
         /**
          * @return the nodes respective key value
          */
@@ -164,6 +183,26 @@ public class PathImp implements CITS2200.Path
             return this.nodes[node][0];
         }
 
+        /**
+         *
+         */
+        public void setShortestPath(int node, int val) {
+            this.shortestPaths[node] = val;
+        }
+        
+        /**
+         * @return int[] of all shortest paths.
+         */
+        public int[] getShortestPaths() {
+            return this.shortestPaths;
+        }
+
+        /**
+         * @return int of specific shortest path
+         */
+        public int getShortestPath(int node) {
+            return this.shortestPaths[node];
+        }
         /**
          * Sets the nodes respective key value
          */

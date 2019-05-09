@@ -31,6 +31,7 @@ public static void main(String[] args){
 	if(args.length == 3 && args[0].equals("F")){
 		try{
 			g =	Graph.readFile(args[1], true, false);
+			System.out.println(g.toString());
 			output(g,  Integer.parseInt(args[2]));
 		}catch(Exception e){usage();}		
 	}
