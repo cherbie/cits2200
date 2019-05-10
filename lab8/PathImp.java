@@ -1,4 +1,5 @@
 import CITS2200.*;
+import java.util.PriorityQueue;
 
 public class PathImp implements CITS2200.Path
 {
@@ -15,7 +16,7 @@ public class PathImp implements CITS2200.Path
     public int getMinSpanningTree(Graph g)
     {
         MSTImp imp = new MSTImp(g);
-        return imp.mst.getMSTWeight();
+        return imp.minSpanningTree();
     }
 
      /**
@@ -28,7 +29,7 @@ public class PathImp implements CITS2200.Path
      public int[] getShortestPaths(Graph g, int vertex)
      {
         MSTImp imp = new MSTImp(g);
-        return imp.mst.getShortestPaths();
+        return imp.shortestPaths(vertex);
      }
 
 /* ------------------------------------------- */
@@ -39,7 +40,7 @@ public class PathImp implements CITS2200.Path
     {
         private Graph graph;
         private int vertices; //number of vertices
-        public static final int LARGE_VALUE = 999;
+        public static final int LARGE_VALUE = Integer.MAX_VALUE;
         public MST mst;
 
         /**
@@ -51,11 +52,6 @@ public class PathImp implements CITS2200.Path
             this.graph = g;
             this.vertices = g.getNumberOfVertices();
             this.mst = new MST(vertices); //construct empty minimum spanning tree
-
-            minSpanningTree();
-            /*if(!isValid())
-                throw new IllegalValue("MSTImp: Graph neededs to be weighted & undirected.");
-            */
         }
         
         /**
@@ -74,17 +70,15 @@ public class PathImp implements CITS2200.Path
          * @return int the weight of the minimum spanning tree, or -1 if no minimum spanning tree can be found.
          * @return the weight of the minimum spanning tree, or -1 if there is no spanning tree.
          */
-        private void minSpanningTree()
+        public int minSpanningTree()
         {
             PriorityQueueLinked p_queue = new PriorityQueueLinked();
-            //this.initPriorityQueue(p_queue, vertices);
 
             mst.setNodeKey(0, 0); //set root node key value to zero
             int node, x; //current "window" of node being considered
             int sum = 0; //running sum of weighted MST
 
             p_queue.enqueue(0, 0);
-            mst.setShortestPath(0, 0); //shortest path to root node is 0
 
             while(!p_queue.isEmpty()) //not all elements have been visit
             {
@@ -105,16 +99,61 @@ public class PathImp implements CITS2200.Path
                             mst.setNodeParent(x, node);
                             p_queue.enqueue(x, weight);
                         }
-                        if(mst.getShortestPath(x) > (sum + weight) && weight > 0) //new shortest path
-                                mst.setShortestPath(x, sum + weight);
                     }
                 }
             }
             if(sum <= 0) 
             {
-                mst.setMSTWeight(-1); //indicate no minimum spanning tree present
+                return -1; //indicate no minimum spanning tree present
             }
-            mst.setMSTWeight(sum);
+            return sum;
+        }
+
+        public int[] shortestPaths(int startVert) 
+        {
+            PriorityQueueLinked p_queue = new PriorityQueueLinked();
+
+            mst.setShortestPath(startVert, 0);
+            mst.setNodeKey(startVert, 0); //set root node key value to zero
+            int node, x; //current "window" of node being considered
+            int sum = 0; //running sum of weighted MST
+            int min_node = 0;
+
+            p_queue.enqueue(startVert, 0);
+            while(!p_queue.isEmpty()) //not all elements have been visit
+            {
+                node = (int) p_queue.dequeue(); //dequeue vertex 0 --> marked as seen
+
+                if(mst.nodeVisited(node)) continue; //if already visited skip.
+                mst.setNodeVisited(node, 1);
+                System.out.println("node: " + node + "\tprevsum = " + sum);
+                sum += (int) mst.getNodeKey(node); //increment mininum spanning tree weight
+                System.out.println("sum:\t" + sum + "node:\t" + node + "val:\t" + mst.getNodeKey(node));
+                PriorityQueueLinked p = new PriorityQueueLinked();
+                for(x = 0; x < vertices; x++)
+                {
+                    if(!mst.nodeVisited(x)) //not visited
+                    {
+                        int weight = graph.getWeight(node, x);
+                        if(weight > 0 && mst.getShortestPath(x) > (weight+sum)) //connected
+                        {
+                            p.enqueue(x, weight); //find minimum in branches
+                            mst.setNodeKey(x, weight);
+                            mst.setShortestPath(x, weight+sum); //cost up until that vertices
+                            System.out.println("node:" + node + "\t x = " + x + "\tval = " + mst.getNodeKey(x));
+                        }
+                        else if( weight > 0) 
+                        {
+                            p.enqueue(x, weight); //find minimum in branches
+                            mst.setNodeKey(x, weight);
+                        }
+                    }
+                }
+                if(p.isEmpty()) continue;
+                min_node = (int) p.dequeue();
+                p_queue.enqueue(min_node, mst.getNodeKey(min_node)); //only add minimum of minimum spanning tree
+            }
+            return mst.getShortestPaths();
         }
 
         /**
@@ -284,7 +323,7 @@ public class PathImp implements CITS2200.Path
             else
             {
                 Link<E> window = front;
-                while( window.next != null && window.next.priority <= p ) //lowest priority
+                while( window.next != null && window.next.priority < p ) //lowest priority
                 {
                     window = window.next;
                 }

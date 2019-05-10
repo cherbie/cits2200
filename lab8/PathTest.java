@@ -31,9 +31,13 @@ public static void main(String[] args){
 	if(args.length == 3 && args[0].equals("F")){
 		try{
 			g =	Graph.readFile(args[1], true, false);
-			System.out.println(g.toString());
-			output(g,  Integer.parseInt(args[2]));
-		}catch(Exception e){usage();}		
+			output(g, Integer.parseInt(args[2]));
+
+		}catch(Exception e){
+			usage();
+			System.out.println(e.toString());
+		}	
+	
 	}
 	else if(args.length == 4 && args[0].equals("R")){
 		g = Graph.randomWeightedGraph(Integer.parseInt(args[1]), false, Double.parseDouble(args[2]), Integer.parseInt(args[3]));
