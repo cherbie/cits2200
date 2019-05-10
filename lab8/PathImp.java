@@ -85,7 +85,6 @@ public class PathImp implements CITS2200.Path
                 node = (int) p_queue.dequeue(); //dequeue vertex 0 --> marked as seen
 
                 if(mst.nodeVisited(node)) continue; //if already visited skip.
-                System.out.println("sum:\t" + sum + "node:\t" + node + "val:\t" + mst.getNodeKey(node));
                 mst.setNodeVisited(node, 1);
                 sum += (int) mst.getNodeKey(node); //increment mininum spanning tree weight
                 for(x = 0; x < vertices; x++)
@@ -116,8 +115,6 @@ public class PathImp implements CITS2200.Path
             mst.setShortestPath(startVert, 0);
             mst.setNodeKey(startVert, 0); //set root node key value to zero
             int node; //current "window" of node being considered
-            //int sum = 0; //running sum of weighted MST
-            //int min_node = 0;
             int[] distances = new int[this.vertices];
 
             p_queue.enqueue(startVert, 0);
@@ -126,62 +123,19 @@ public class PathImp implements CITS2200.Path
                 if(mst.nodeVisited(node)) continue; //visited
                 mst.setNodeVisited(node, 1);
                 distances[node] = mst.getShortestPath(node);
-                System.out.println("NODE:\t" + node + "SP:\t" + distances[node]);
                 for(int x = 0; x < this.vertices; x++) {
-                    System.out.println("ENTER LOOP\n");
                     if(!mst.nodeVisited(x)) { //not visited
                         int weight = graph.getWeight(node, x);
-                        System.out.println("weight:\t" + weight);
-                        if(weight > 0) {
-                            if(weight < mst.getShortestPath(x)) {
-                                int priority = distances[node] + weight;
-                                System.out.println(priority);
-                                mst.setShortestPath(x, priority);
-                                p_queue.enqueue(x, priority);
-                                System.out.println("Enqueued:\t" + x + "with value:\t" + priority);
-                            }
+                        int priority = distances[node] + weight;
+                        if(weight > 0 && priority < mst.getShortestPath(x)) {
+                            mst.setShortestPath(x, priority);
+                            p_queue.enqueue(x, priority);
                         }
                     }
-                    else System.out.println("TROUBLE");
                 }
             }
             return distances;
         }
-/*
-            while(!p_queue.isEmpty()) //not all elements have been visit
-            {
-                node = (int) p_queue.dequeue(); //dequeue vertex 0 --> marked as seen
-
-                if(mst.nodeVisited(node)) continue; //if already visited skip.
-                mst.setNodeVisited(node, 1);
-                System.out.println("node: " + node + "\tprevsum = " + sum);
-                sum += (int) mst.getNodeKey(node); //increment mininum spanning tree weight
-                System.out.println("sum:\t" + sum + "node:\t" + node + "val:\t" + mst.getNodeKey(node));
-                PriorityQueueLinked p = new PriorityQueueLinked();
-                for(x = 0; x < vertices; x++)
-                {
-                    if(!mst.nodeVisited(x)) //not visited
-                    {
-                        int weight = graph.getWeight(node, x);
-                        if(weight > 0 && mst.getShortestPath(x) > (weight+sum)) //connected
-                        {
-                            p.enqueue(x, weight); //find minimum in branches
-                            mst.setNodeKey(x, weight);
-                            mst.setShortestPath(x, weight+sum); //cost up until that vertices
-                            System.out.println("node:" + node + "\t x = " + x + "\tval = " + mst.getNodeKey(x));
-                        }
-                        else if( weight > 0) 
-                        {
-                            p.enqueue(x, weight); //find minimum in branches
-                            mst.setNodeKey(x, weight);
-                        }
-                    }
-                }
-                if(p.isEmpty()) continue;
-                min_node = (int) p.dequeue();
-                p_queue.enqueue(min_node, mst.getNodeKey(min_node)); //only add minimum of minimum spanning tree
-            }
-            return mst.getShortestPaths(); */
 
         /**
          * Construct a priority queue containing all vertices of the classes graph
