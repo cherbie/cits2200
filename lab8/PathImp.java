@@ -3,10 +3,12 @@ import java.util.PriorityQueue;
 
 public class PathImp implements CITS2200.Path
 {
+    private MSTImp imp; //sub-class implementation of mst and shortest path algorithms
+
     /**
      * Constructor.
      */
-    public PathImp() {};
+    public PathImp() { this.imp = new MSTImp(); };
 
     /**
      * @return int the weight of the minimum spanning tree, or -1 if no minimum spanning tree can be found.
@@ -15,7 +17,7 @@ public class PathImp implements CITS2200.Path
      */
     public int getMinSpanningTree(Graph g)
     {
-        MSTImp imp = new MSTImp(g);
+        imp.defineGraph(g);
         return imp.minSpanningTree();
     }
 
@@ -28,11 +30,9 @@ public class PathImp implements CITS2200.Path
      */
      public int[] getShortestPaths(Graph g, int vertex)
      {
-        MSTImp imp = new MSTImp(g);
+        imp.defineGraph(g);
         return imp.shortestPaths(vertex);
      }
-
-/* ------------------------------------------- */
 
 /* ------------------------------------------- */
 
@@ -40,39 +40,29 @@ public class PathImp implements CITS2200.Path
     {
         private Graph graph;
         private int vertices; //number of vertices
-        public static final int LARGE_VALUE = Integer.MAX_VALUE;
         public MST mst;
 
         /**
          * Contructor for the Prim Algorithm implementation of MST
          * @throws IllegalValue when the graph is directed or not weighted
          */
-        public MSTImp(Graph g)
+        public MSTImp() {}
+
+        public void defineGraph(Graph g)
         {
             this.graph = g;
             this.vertices = g.getNumberOfVertices();
-            this.mst = new MST(vertices); //construct empty minimum spanning tree
-        }
-        
-        /**
-         * Weighted, undirected graphs are implemented using Prim's algorithm.
-         * @return true if valid graph, false otherwise
-         */
-        private boolean isValid()
-        {
-            if(!graph.isDirected() && graph.isWeighted())
-                return true;
-            return false;
+            this.mst = new MST(vertices);
         }
 
         /**
-         * Use of heap to implement prim's algorithm
+         * Use of heap to implement prim's algorithm.
          * @return int the weight of the minimum spanning tree, or -1 if no minimum spanning tree can be found.
          * @return the weight of the minimum spanning tree, or -1 if there is no spanning tree.
          */
         public int minSpanningTree()
         {
-            PriorityQueueLinked p_queue = new PriorityQueueLinked();
+            PriorityQueueLinked<Integer> p_queue = new PriorityQueueLinked<Integer>();
 
             mst.setNodeKey(0, 0); //set root node key value to zero
             int node, x; //current "window" of node being considered
@@ -82,11 +72,12 @@ public class PathImp implements CITS2200.Path
 
             while(!p_queue.isEmpty()) //not all elements have been visit
             {
-                node = (int) p_queue.dequeue(); //dequeue vertex 0 --> marked as seen
+                node = p_queue.dequeue(); //dequeue vertex 0 --> marked as seen
 
                 if(mst.nodeVisited(node)) continue; //if already visited skip.
                 mst.setNodeVisited(node, 1);
-                sum += (int) mst.getNodeKey(node); //increment mininum spanning tree weight
+                sum += mst.getNodeKey(node); //increment mininum spanning tree weight
+
                 for(x = 0; x < vertices; x++)
                 {
                     if(!mst.nodeVisited(x)) //not visited
@@ -102,15 +93,13 @@ public class PathImp implements CITS2200.Path
                 }
             }
             if(sum <= 0) 
-            {
                 return -1; //indicate no minimum spanning tree present
-            }
             return sum;
         }
 
         public int[] shortestPaths(int startVert) 
         {
-            PriorityQueueLinked p_queue = new PriorityQueueLinked();
+            PriorityQueueLinked<Integer> p_queue = new PriorityQueueLinked<Integer>();
 
             mst.setShortestPath(startVert, 0);
             mst.setNodeKey(startVert, 0); //set root node key value to zero
@@ -119,7 +108,7 @@ public class PathImp implements CITS2200.Path
 
             p_queue.enqueue(startVert, 0);
             while(!p_queue.isEmpty()) {
-                node = (int) p_queue.dequeue();
+                node = p_queue.dequeue();
                 if(mst.nodeVisited(node)) continue; //visited
                 mst.setNodeVisited(node, 1);
                 distances[node] = mst.getShortestPath(node);
@@ -136,22 +125,6 @@ public class PathImp implements CITS2200.Path
             }
             return distances;
         }
-
-        /**
-         * Construct a priority queue containing all vertices of the classes graph
-         * and set the values to a large number.
-         * @return initialised PriorityQueueLinked object
-         * @param PriorityQueueLinked p
-         * @param int number of vertices in graph
-         */
-        private void initPriorityQueue(PriorityQueueLinked p, int v)
-        {
-            for(int i = 1; i < v; i++)
-            {
-                p.enqueue(i, this.LARGE_VALUE);
-            }
-            p.enqueue(0,0); //starting at node 0
-        }
     }
 
 /* ----------------------------------- */
@@ -162,18 +135,16 @@ public class PathImp implements CITS2200.Path
         private int[] shortestPaths;
         private int mstWeight;
 
-
         /**
          * Constructor of minimum spanning tree ADT
          */
         public MST(int V)
         {
-            nodes = new int[V][3];
-            shortestPaths = new int[V];
-            mstWeight = 0;
+            this.nodes = new int[V][3];
+            this.shortestPaths = new int[V];
+            this.mstWeight = 0;
 
-            for(int i = 0; i < V; i++)
-            {
+            for(int i = 0; i < V; i++) {
                 this.setNodeParent(i, -1); //undefined parent
                 this.setNodeKey(i, Integer.MAX_VALUE);
                 this.setShortestPath(i, Integer.MAX_VALUE);
@@ -186,14 +157,15 @@ public class PathImp implements CITS2200.Path
          */
         public void setMSTWeight(int val) 
         {
-            mstWeight = val;
+           this.mstWeight = val;
         }
 
         /**
          *
         */
-        public int getMSTWeight() {
-            return mstWeight;
+        public int getMSTWeight() 
+        {
+            return this.mstWeight;
         }
         /**
          * @return the nodes respective key value
@@ -237,7 +209,7 @@ public class PathImp implements CITS2200.Path
          */
         public void setNodeVisited(int node, int val)
         {
-            nodes[node][2] = val;
+            this.nodes[node][2] = val;
         }
 
         /**
@@ -245,7 +217,7 @@ public class PathImp implements CITS2200.Path
          */
         public boolean nodeVisited(int node)
         {
-            return nodes[node][2] > 0;
+            return this.nodes[node][2] > 0;
         }
         /**
          * Node descriptor is set as parent. 
@@ -267,9 +239,10 @@ public class PathImp implements CITS2200.Path
 
 /* ------------------------------------- */
 
-    public class PriorityQueueLinked<E> implements CITS2200.PriorityQueue<E>
+    public class PriorityQueueLinked<E>
     {
         private Link<E> front;
+        
         /**
         * Constructor for implementation of CITS2200.PriorityQueueLinked
         * Empty priority queue created.
@@ -337,48 +310,6 @@ public class PathImp implements CITS2200.Path
             E temp = (E) front.element;
             front = front.next;
             return temp;
-        }
-
-        /**
-        * Return a DAT.iterator to examine all the elements in the priority queue
-        * @return an iterator pointing to before the first item
-        */
-        public Iterator<E> iterator()
-        {
-            return new PQueueIterator<E>();
-        }
-
-        public class PQueueIterator<A> implements CITS2200.Iterator<A>
-        {
-            private Link<E> current;
-
-            public PQueueIterator()
-            {
-                current = PriorityQueueLinked.this.front;
-            }
-
-            /**
-            * Tests if there is a next item to return
-            * @return true if and only if there is a next item 
-            */
-            public boolean hasNext()
-            {
-                return current != null;
-            }
-
-            /**
-            * Returns the next element and moves the iterator to the next position
-            * @return the next element in the collection
-            * @throws OutOfBounds if there is no next element
-            */
-            public A next() throws OutOfBounds
-            {
-                if(!this.hasNext())
-                    throw new OutOfBounds("next: queue is empty.");
-                A temp = (A) current.element;
-                current = current.next;
-                return temp;
-            }
         }
 
         public class Link<E>
