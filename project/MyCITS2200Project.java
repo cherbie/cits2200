@@ -1,4 +1,4 @@
-public class Project implements CITS2200Project {
+public class MyCITS2200Project implements CITS2200Project {
     //FIELDS
 
     //CONSTRUCTOR
