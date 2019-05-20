@@ -36,6 +36,7 @@ public class CITS2200ProjectTester {
 
 		/** TESTING **/
 		printLookupTable(proj.wikiAddr);
+		printAdjacencyList(proj.edgeList, 2);
 	}
 
 	public static void print(String s) {
@@ -46,6 +47,15 @@ public class CITS2200ProjectTester {
 		int size = al.size();
 		for(int i = 0; i < size; i++) {
 			System.out.println("vertex descriptor:\t" + i + "\taddress:\t" + al.get(i));
+		}
+	}
+
+	public static void printAdjacencyList(HashMap<Integer, LinkedList<Integer>> map, int node) {
+		LinkedList<Integer> ll = map.get(node);
+		int size = ll.size();
+		System.out.println("NODE - " + node);
+		for(int i = 0; i < size; i++) {
+			System.out.println("edge:\t" + ll.get(i));
 		}
 	}
 }

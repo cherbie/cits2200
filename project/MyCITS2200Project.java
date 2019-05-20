@@ -5,11 +5,11 @@ import java.lang.Integer;
 import java.lang.String;
 
 public class MyCITS2200Project implements CITS2200Project {
-    //FIELDS
+	//FIELDS
 	public ArrayList<String> wikiAddr; //LOOKUP TABLE
 	private int maxvd; //number of vertice descriptor (similar to file descriptor)
-	private HashMap< Integer, LinkedList<Integer> > edgeList;
-	
+	public HashMap<Integer, LinkedList<Integer>> edgeList;
+
 	//CONSTRUCTOR
 	public MyCITS2200Project() {
 		this.wikiAddr = new ArrayList<>();
