@@ -6,7 +6,7 @@ import java.lang.String;
 
 public class MyCITS2200Project implements CITS2200Project {
     //FIELDS
-	private ArrayList<String> wikiAddr; //LOOKUP TABLE
+	public ArrayList<String> wikiAddr; //LOOKUP TABLE
 	private int maxvd; //number of vertice descriptor (similar to file descriptor)
 	private HashMap< Integer, LinkedList<Integer> > edgeList;
 	
@@ -16,6 +16,7 @@ public class MyCITS2200Project implements CITS2200Project {
 		this.edgeList = new HashMap<>();
 		this.maxvd = 0;
 	}
+	
     //METHODS
     /**
 	 * Adds an edge to the Wikipedia page graph. If the pages do not

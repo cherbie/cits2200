@@ -1,8 +1,14 @@
 import java.io.*;
 import java.util.*;
 
+/**
+ * NOTE: CHANGE ALL REFERENCE TO MYCITS2200PROJECT TO THE INTERFACE CLASS CITS2200PROJECT FOR TEST
+ */
+
 public class CITS2200ProjectTester {
-	public static void loadGraph(CITS2200Project project, String path) {
+	private MyCITS2200Project myProj;
+
+	public static void loadGraph(MyCITS2200Project project, String path) {
 		// The graph is in the following format:
 		// Every pair of consecutive lines represent a directed edge.
 		// The edge goes from the URL in the first line to the URL in the second line.
@@ -24,10 +30,22 @@ public class CITS2200ProjectTester {
 		// Change this to be the path to the graph file.
 		String pathToGraphFile = "./example_graph.in";
 		// Create an instance of your implementation.
-		CITS2200Project proj = new MyCITS2200Project();
+		MyCITS2200Project proj = new MyCITS2200Project();
 		// Load the graph into the project.
 		loadGraph(proj, pathToGraphFile);
 
-		// Write your own tests!
+		/** TESTING **/
+		printLookupTable(proj.wikiAddr);
+	}
+
+	public static void print(String s) {
+		System.out.println(s);
+	}
+
+	public static void printLookupTable(ArrayList<String> al) {
+		int size = al.size();
+		for(int i = 0; i < size; i++) {
+			System.out.println("vertex descriptor:\t" + i + "\taddress:\t" + al.get(i));
+		}
 	}
 }
