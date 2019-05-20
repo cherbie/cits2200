@@ -1,8 +1,21 @@
+import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.lang.Integer;
+import java.lang.String;
+
 public class MyCITS2200Project implements CITS2200Project {
     //FIELDS
-
-    //CONSTRUCTOR
-
+	private ArrayList<String> wikiAddr; //LOOKUP TABLE
+	private int maxvd; //number of vertice descriptor (similar to file descriptor)
+	private HashMap< Integer, LinkedList<Integer> > edgeList;
+	
+	//CONSTRUCTOR
+	public MyCITS2200Project() {
+		this.wikiAddr = new ArrayList<>();
+		this.edgeList = new HashMap<>();
+		this.maxvd = 0;
+	}
     //METHODS
     /**
 	 * Adds an edge to the Wikipedia page graph. If the pages do not
@@ -12,7 +25,32 @@ public class MyCITS2200Project implements CITS2200Project {
 	 * @param urlTo the URL which urlFrom has a link to.
 	 */
 	public void addEdge(String urlFrom, String urlTo) {
+		//SEARCH PARENT
+		int parentvd = this.wikiAddr.indexOf(urlFrom);
+		int childvd = this.wikiAddr.indexOf(urlTo);
+		if(parentvd < 0) { //vertex does not exist in lookup table
+			parentvd = this.maxvd;
+			this.wikiAddr.add(parentvd, urlFrom);
+			this.edgeList.put(parentvd, new LinkedList<>());
+			this.maxvd++;
+		}
+		else if(!this.edgeList.containsKey(parentvd)) { //does contain a linked list already
+			//does not have a linkedlist mapped
+			this.edgeList.put(parentvd, new LinkedList<>());
+		}
+		if(childvd < 0) { //vertex does not exist in lookup table
+			childvd = this.maxvd;
+			this.wikiAddr.add(childvd, urlTo);
+			this.maxvd++;
+		}
 
+		//ADD VERTICE DESCRIPTORS TO LINKED LIST
+		//CHECK IF EDGE ALREADY EXISTS
+		if(!edgeList.get(parentvd).contains(childvd)) { //edge does not exist in LinkedList
+			edgeList.get(parentvd).add(childvd);
+		}
+		//Linked list already contains the edge
+		return;
     }
 
     /**
@@ -24,7 +62,8 @@ public class MyCITS2200Project implements CITS2200Project {
 	 * @return the legnth of the shorest path in number of links followed.
 	 */
 	public int getShortestPath(String urlFrom, String urlTo) {
-
+		//arraylist.trimToSize();
+		return 0;
     }
 
     /**
@@ -36,7 +75,7 @@ public class MyCITS2200Project implements CITS2200Project {
 	 * @return an array containing all the URLs that correspond to pages that are centers.
 	 */
 	public String[] getCenters() {
-        
+		return new String[1];
     }
 
     /**
@@ -50,7 +89,7 @@ public class MyCITS2200Project implements CITS2200Project {
 	 * @return an array containing every strongly connected component.
 	 */
 	public String[][] getStronglyConnectedComponents() {
-
+		return new String[1][1];
     }
 
     /**
@@ -66,6 +105,6 @@ public class MyCITS2200Project implements CITS2200Project {
 	 * @return a Hamiltonian path of the page graph.
 	 */
 	public String[] getHamiltonianPath() {
-
+		return new String[1];
     }
 }
