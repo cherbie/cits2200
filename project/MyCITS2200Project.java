@@ -64,6 +64,7 @@ public class MyCITS2200Project implements CITS2200Project {
 	 */
 	public int getShortestPath(String urlFrom, String urlTo) {
 		//arraylist.trimToSize();
+		// bfs lab work: /Users/herbsca/OneDrive/UWA/CITS2200/cits2200/lab6/SearchImp.java
 		return 0;
     }
 
