@@ -11,7 +11,9 @@ PROJECT STATUS:
     - | DONE | ADD VERTICES TO ArrayList LOOKUP TABLE
     - | DONE | ADD EDGE TO LINKEDLIST
     - | DONE | WRITE "public void addEdge(String, String)" method
+    - | DONE | COMPLETED BFS ALGORITHM AND FOUND SHORTEST PATH.
+    - | | WRITE STRONGLY CONNECTED COMPONENTS ALGORITHM
 
 ####################################
 QUESTIONS:
-    - is a BFS garuanteed to have a shortest path outcome for each vertex?
+    - [ans = YES] is a BFS garuanteed to have a shortest path outcome for each vertex? 
