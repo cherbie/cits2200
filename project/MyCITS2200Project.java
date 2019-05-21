@@ -13,11 +13,13 @@ public class MyCITS2200Project implements CITS2200Project {
 	public  ArrayList<String>                     wikiAddr; //LOOKUP TABLE
 	private int                                   maxvd; //number of vertice descriptor (similar to file descriptor)
 	public  HashMap<Integer, LinkedList<Integer>> edgeList;
+	public  ArrayList<Colour>											colour;
 
 	//CONSTRUCTOR
 	public MyCITS2200Project() {
 		this.wikiAddr = new ArrayList<>();
 		this.edgeList = new HashMap<>();
+		this.colour = new ArrayList<>();
 		this.maxvd = 0;
 	}
 
@@ -39,15 +41,16 @@ public class MyCITS2200Project implements CITS2200Project {
 			parentvd = this.maxvd;
 			this.wikiAddr.add(parentvd, urlFrom);
 			this.edgeList.put(parentvd, new LinkedList<>());
+			this.colour.add(Colour.WHITE);
 			this.maxvd++;
 		}
-		else if(!this.edgeList.containsKey(parentvd)) { //does contain a linked list already
-			//does not have a linkedlist mapped
+		else if(!this.edgeList.containsKey(parentvd)) { //does not have a linkedlist mapped
 			this.edgeList.put(parentvd, new LinkedList<>());
 		}
 		if(childvd < 0) { //vertex does not exist in lookup table
 			childvd = this.maxvd;
 			this.wikiAddr.add(childvd, urlTo);
+			this.colour.add(Colour.WHITE);
 			this.maxvd++;
 		}
 
@@ -73,118 +76,6 @@ public class MyCITS2200Project implements CITS2200Project {
 		return vd;
 	}
 
-	private class MyBFS<E> {
-		//FIELDS
-		private int[] distance; 
-		private HashMap<Integer, LinkedList<Integer>> vertexEdges;
-		private Colour[] colour;
-
-		/**
-		 * CONSTRUCTOR OF BFS CLASS
-		 */
-		public MyBFS() {
-			int numNodes = MyCITS2200Project.this.maxvd;
-			this.distance = new int[numNodes];
-			this.vertexEdges = MyCITS2200Project.this.edgeList;
-			this.setColour(numNodes); //
-		}
-
-		private void setColour(int size) {
-			this.colour = new Colour[size];
-			for(int i = 0; i < size; i++) {
-				this.colour[i] = Colour.WHITE;
-			}
-		}
-
-		/**
-		 * RUN ENTIRE BFS ALGORITHM ON THE ESTABLISHED GRAPH.
-		 * GARUANTEES SHORTEST PATH DISTANCE FIELD WILL BE UP-TO-DATE.
-		 * @param startVertex the starting vertex of the BFS.
-		 */
-		public void run(int startVertex) {
-
-			LinkedList<Integer> q = new LinkedList<>(); //queue implementation
-			LinkedList<Integer> ll;
-			int w, x;
-
-			//BFS ALGORITHM
-			distance[startVertex] = 0;
-			q.add(startVertex);
-			while(q.peek() != null) {
-				w = (int) q.remove(); //REMOVE FIRST ELEMENT IN THE QUEUE
-				//FIND ADJACENT VERTICES TO w
-				ll = MyCITS2200Project.this.edgeList.get(w); //adjacency list for the node
-				if(ll == null) continue; //NO VALUE MAPPED TO KEY
-				System.out.println(ll.toString());
-				while(ll.peek() != null) {
-					//CONNECTED OR "CHILD" OF w
-					x = (int) ll.remove();
-					System.out.println(x);
-					if(colour[x] == Colour.WHITE) { //WHITE OR NOT SEEN
-						if(x == w) continue; //non-cyclical
-						distance[x] = distance[w] + 1;
-						colour[x] = Colour.GREY; //SET TO GREY OR SEEN
-						q.add(x);
-					}
-				}
-				colour[w] = Colour.BLACK; //SET TO BLACK
-			}
-		}
-
-		/**
-		 * GET THE SHORTEST PATH TO EACH NODE.
-		 */
-		public int[] getDistances() {
-			return this.distance;
-		}
-
-		/**
-		 * GET THE SHORTEST PATH FOR A SPECIFIC NODE.
-		 */
-		public int getDistances(int node) {
-			return this.distance[node];
-		}
-
-		/**
-		 * RUN A BFS OVER AN ESTABLISHED GRAPH AND EXIT AS SOON AS
-		 * THE ENDING NODE IS REACHED.
-		 * NOT GARUANTEED TO COMPLETELY FILL SHORTEST PATH DISTANCE ARRAY
-		 * @param int startVertex is the starting vertex.
-		 * @param int endVertex is the ending vertex.
-		 * @return int shortest path to get to the ending vertex. 
-		 */
-		public int shortestPath(int startVertex, int endVertex) throws Exception {
-
-			LinkedList<Integer> q = new LinkedList<>(); //queue implementation
-			LinkedList<Integer> ll;
-			int w, x;
-
-			//BFS ALGORITHM
-			distance[startVertex] = 0;
-			q.add(startVertex);
-			while(q.peek() != null) {
-				w = (int) q.remove(); //REMOVE FIRST ELEMENT IN THE QUEUE
-				//FIND ADJACENT VERTICES TO w
-				ll = MyCITS2200Project.this.edgeList.get(w); //adjacency list for the node
-				if(ll == null) continue; //NO VALUE MAPPED TO KEY
-				System.out.println(ll.toString());
-				while(ll.peek() != null) {
-					//CONNECTED OR "CHILD" OF w
-					x = (int) ll.remove();
-					System.out.println(x);
-					if(colour[x] == Colour.WHITE) { //WHITE OR NOT SEEN
-						if(x == w) continue; //non-cyclical
-						distance[x] = distance[w] + 1;
-						if(x == endVertex) return distance[endVertex]; //seen end point
-						colour[x] = Colour.GREY; //SET TO GREY OR SEEN
-						q.add(x);
-					}
-				}
-				colour[w] = Colour.BLACK; //SET TO BLACK
-			}
-			throw new Exception("BFS FAILED TO FIND THE END VERTEX");
-		}
-	}
 	/**
 	* Finds the shorest path in number of links between two pages.
 	* If there is no path, returns -1.
@@ -250,5 +141,113 @@ public class MyCITS2200Project implements CITS2200Project {
 	*/
 	public String[] getHamiltonianPath() {
 		return new String[1];
+	}
+
+/*******************************************************************/
+	private class MyBFS<E> {
+		//FIELDS
+		private int[] distance; 
+		private HashMap<Integer, LinkedList<Integer>> vertexEdges;
+		private ArrayList<Colour> colour;
+
+		/**
+		 * CONSTRUCTOR OF BFS CLASS
+		 */
+		public MyBFS() throws Exception {
+			int numNodes = MyCITS2200Project.this.maxvd;
+			this.distance = new int[numNodes];
+			this.vertexEdges = MyCITS2200Project.this.edgeList;
+			this.colour = MyCITS2200Project.this.colour;
+			if(this.colour.size() < numNodes) throw new Exception("NOT ALL NODES ARE SET AS 'UNVISITED'.");
+		}
+
+		/**
+		 * RUN ENTIRE BFS ALGORITHM ON THE ESTABLISHED GRAPH.
+		 * GARUANTEES SHORTEST PATH DISTANCE FIELD WILL BE UP-TO-DATE.
+		 * @param startVertex the starting vertex of the BFS.
+		 */
+		public void run(int startVertex) {
+
+			LinkedList<Integer> q = new LinkedList<>(); //queue implementation
+			LinkedList<Integer> ll;
+			int w, x;
+
+			//BFS ALGORITHM
+			distance[startVertex] = 0;
+			q.add(startVertex);
+			while(q.peek() != null) {
+				w = (int) q.remove(); //REMOVE FIRST ELEMENT IN THE QUEUE
+				//FIND ADJACENT VERTICES TO w
+				ll = MyCITS2200Project.this.edgeList.get(w); //adjacency list for the node
+				if(ll == null) continue; //NO VALUE MAPPED TO KEY
+				System.out.println(ll.toString());
+				while(ll.peek() != null) {
+					//CONNECTED OR "CHILD" OF w
+					x = (int) ll.remove();
+					if(x == w) continue; //non-cyclical
+					System.out.println(x);
+					if(this.colour.get(x) == Colour.WHITE) { //WHITE OR NOT SEEN
+						distance[x] = distance[w] + 1;
+						this.colour.set(x, Colour.GREY); //SET TO GREY OR SEEN
+						q.add(x);
+					}
+				}
+				this.colour.set(w, Colour.BLACK); //SET TO BLACK
+			}
+		}
+
+		/**
+		 * GET THE SHORTEST PATH TO EACH NODE.
+		 */
+		public int[] getDistances() {
+			return this.distance;
+		}
+
+		/**
+		 * GET THE SHORTEST PATH FOR A SPECIFIC NODE.
+		 */
+		public int getDistances(int node) {
+			return this.distance[node];
+		}
+
+		/**
+		 * RUN A BFS OVER AN ESTABLISHED GRAPH AND EXIT AS SOON AS
+		 * THE ENDING NODE IS REACHED.
+		 * NOT GARUANTEED TO COMPLETELY FILL SHORTEST PATH DISTANCE ARRAY
+		 * @param int startVertex is the starting vertex.
+		 * @param int endVertex is the ending vertex.
+		 * @return int shortest path to get to the ending vertex. 
+		 */
+		public int shortestPath(int startVertex, int endVertex) throws Exception {
+
+			LinkedList<Integer> q = new LinkedList<>(); //queue implementation
+			LinkedList<Integer> ll;
+			int w, x;
+
+			//BFS ALGORITHM
+			distance[startVertex] = 0;
+			q.add(startVertex);
+			while(q.peek() != null) {
+				w = (int) q.remove(); //REMOVE FIRST ELEMENT IN THE QUEUE
+				//FIND ADJACENT VERTICES TO w
+				ll = MyCITS2200Project.this.edgeList.get(w); //adjacency list for the node
+				if(ll == null) continue; //NO VALUE MAPPED TO KEY
+				System.out.println(ll.toString());
+				while(ll.peek() != null) {
+					//CONNECTED OR "CHILD" OF w
+					x = (int) ll.remove();
+					System.out.println(x);
+					if(this.colour.get(x) == Colour.WHITE) { //WHITE OR NOT SEEN
+						if(x == w) continue; //non-cyclical
+						distance[x] = distance[w] + 1;
+						if(x == endVertex) return distance[endVertex]; //seen end point
+						this.colour.set(x, Colour.GREY); //SET TO GREY OR SEEN
+						q.add(x);
+					}
+				}
+				this.colour.set(w, Colour.BLACK); //SET TO BLACK
+			}
+			throw new Exception("BFS FAILED TO FIND THE END VERTEX");
+		}
 	}
 }
