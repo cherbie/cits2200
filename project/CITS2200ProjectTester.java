@@ -8,6 +8,30 @@ import java.util.*;
 public class CITS2200ProjectTester {
 	private MyCITS2200Project myProj;
 
+	/** 
+	 * MAIN FUNCTION
+	 */
+	public static void main(String[] args) {
+		// Change this to be the path to the graph file.
+		String pathToGraphFile = "./example_graph.in";
+		// Create an instance of your implementation.
+		MyCITS2200Project proj = new MyCITS2200Project();
+		// Load the graph into the project.
+		loadGraph(proj, pathToGraphFile);
+
+		/** TESTING **/
+		printLookupTable(proj.wikiAddr);
+		printAdjacencyList(proj.edgeList, 8);
+
+		String startVertex = "/wiki/Multi-commodity_flow_problem";
+		String endVertex = "/wiki/Minimum-cost_flow_problem";
+		int sp = proj.getShortestPath(startVertex, endVertex);
+		print("SHORTEST PATH BETWEEN: \n\t" + startVertex + "\n\t" + endVertex + "\n\t ==> " + sp);
+	}
+	
+	/**
+	 * READS GIVEN FILE AND ESTABLISHES GRAPH NODES AND EDGES.
+	 */
 	public static void loadGraph(MyCITS2200Project project, String path) {
 		// The graph is in the following format:
 		// Every pair of consecutive lines represent a directed edge.
@@ -26,23 +50,18 @@ public class CITS2200ProjectTester {
 		}
 	}
 
-	public static void main(String[] args) {
-		// Change this to be the path to the graph file.
-		String pathToGraphFile = "./example_graph.in";
-		// Create an instance of your implementation.
-		MyCITS2200Project proj = new MyCITS2200Project();
-		// Load the graph into the project.
-		loadGraph(proj, pathToGraphFile);
 
-		/** TESTING **/
-		printLookupTable(proj.wikiAddr);
-		printAdjacencyList(proj.edgeList, 2);
-	}
-
+	/**
+	 * SIMPLIFIED PRINTING TO STANDARD OUTPUT STREAM
+	 */
 	public static void print(String s) {
 		System.out.println(s);
 	}
 
+	/**
+	 * PRINT THE VERTEX DESCRIPTORS OF RECOGNISED WIKI ADDRESS NODES.
+	 * DEBUGGING FUNCTION
+	 */
 	public static void printLookupTable(ArrayList<String> al) {
 		int size = al.size();
 		for(int i = 0; i < size; i++) {
@@ -50,10 +69,14 @@ public class CITS2200ProjectTester {
 		}
 	}
 
+	/**
+	 * PRINT A CERTAIN ADJACENCY LIST OF THE ESTABLISHED GRAPH AND GIVEN NODE.
+	 * DEBUGGING FUNCTION.
+	 */
 	public static void printAdjacencyList(HashMap<Integer, LinkedList<Integer>> map, int node) {
 		LinkedList<Integer> ll = map.get(node);
 		int size = ll.size();
-		System.out.println("NODE - " + node);
+		System.out.println("NODE :: " + node);
 		for(int i = 0; i < size; i++) {
 			System.out.println("edge:\t" + ll.get(i));
 		}
