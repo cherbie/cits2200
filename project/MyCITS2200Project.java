@@ -27,7 +27,6 @@ public class MyCITS2200Project implements CITS2200Project {
 	/**
 	* Adds an edge to the Wikipedia page graph. If the pages do not
 	* already exist in the graph, they will be added to the graph.
-	* 
 	* @param urlFrom the URL which has a link to urlTo.
 	* @param urlTo the URL which urlFrom has a link to.
 	*/
@@ -143,7 +142,7 @@ public class MyCITS2200Project implements CITS2200Project {
 		return new String[1];
 	}
 
-/*******************************************************************/
+	/*******************************************************************/
 	private class MyBFS<E> {
 		//FIELDS
 		private int[] distance; 
@@ -249,5 +248,19 @@ public class MyCITS2200Project implements CITS2200Project {
 			}
 			throw new Exception("BFS FAILED TO FIND THE END VERTEX");
 		}
+	}
+
+	/*************************************************************/
+	private class MySCC {
+		//FIELDS
+
+		/**
+		 * CONSTRUCTOR OF STRONGLY CONNECTED COMPONENTS (SCC) CLASS.
+		 */
+		public MySCC() {
+
+		}
+
+
 	}
 }
