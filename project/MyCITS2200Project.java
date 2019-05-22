@@ -13,7 +13,7 @@ public class MyCITS2200Project implements CITS2200Project {
 	public  ArrayList<String>                     wikiAddr; //LOOKUP TABLE
 	private int                                   maxvd; //number of vertice descriptor (similar to file descriptor)
 	public  HashMap<Integer, LinkedList<Integer>> edgeList;
-	public  ArrayList<Colour>											colour;
+	public  ArrayList<Colour>					  colour;
 
 	//CONSTRUCTOR
 	public MyCITS2200Project() {
@@ -147,7 +147,6 @@ public class MyCITS2200Project implements CITS2200Project {
 		//FIELDS
 		private int[] distance; 
 		private HashMap<Integer, LinkedList<Integer>> vertexEdges;
-		private ArrayList<Colour> colour;
 
 		/**
 		 * CONSTRUCTOR OF BFS CLASS
@@ -156,8 +155,6 @@ public class MyCITS2200Project implements CITS2200Project {
 			int numNodes = MyCITS2200Project.this.maxvd;
 			this.distance = new int[numNodes];
 			this.vertexEdges = MyCITS2200Project.this.edgeList;
-			this.colour = MyCITS2200Project.this.colour;
-			if(this.colour.size() < numNodes) throw new Exception("NOT ALL NODES ARE SET AS 'UNVISITED'.");
 		}
 
 		/**
@@ -165,10 +162,12 @@ public class MyCITS2200Project implements CITS2200Project {
 		 * GARUANTEES SHORTEST PATH DISTANCE FIELD WILL BE UP-TO-DATE.
 		 * @param startVertex the starting vertex of the BFS.
 		 */
-		public void run(int startVertex) {
+		public void run(int startVertex) throws Exception {
 
 			LinkedList<Integer> q = new LinkedList<>(); //queue implementation
 			LinkedList<Integer> ll;
+			ArrayList<Colour> colour = MyCITS2200Project.this.colour; //all nodes are set as unvisited
+			if(colour.size() < MyCITS2200Project.this.maxvd) throw new Exception("ALL NODES ARE NOT SET AS 'UNVISITED'.");
 			int w, x;
 
 			//BFS ALGORITHM
@@ -185,13 +184,13 @@ public class MyCITS2200Project implements CITS2200Project {
 					x = (int) ll.remove();
 					if(x == w) continue; //non-cyclical
 					System.out.println(x);
-					if(this.colour.get(x) == Colour.WHITE) { //WHITE OR NOT SEEN
+					if(colour.get(x) == Colour.WHITE) { //WHITE OR NOT SEEN
 						distance[x] = distance[w] + 1;
-						this.colour.set(x, Colour.GREY); //SET TO GREY OR SEEN
+						colour.set(x, Colour.GREY); //SET TO GREY OR SEEN
 						q.add(x);
 					}
 				}
-				this.colour.set(w, Colour.BLACK); //SET TO BLACK
+				colour.set(w, Colour.BLACK); //SET TO BLACK
 			}
 		}
 
@@ -222,6 +221,8 @@ public class MyCITS2200Project implements CITS2200Project {
 			LinkedList<Integer> q = new LinkedList<>(); //queue implementation
 			LinkedList<Integer> ll;
 			int w, x;
+			ArrayList<Colour> colour = MyCITS2200Project.this.colour; //all nodes are set as unvisited
+			if(colour.size() < MyCITS2200Project.this.maxvd) throw new Exception("ALL NODES ARE NOT SET AS 'UNVISITED'.");
 
 			//BFS ALGORITHM
 			distance[startVertex] = 0;
@@ -236,15 +237,15 @@ public class MyCITS2200Project implements CITS2200Project {
 					//CONNECTED OR "CHILD" OF w
 					x = (int) ll.remove();
 					System.out.println(x);
-					if(this.colour.get(x) == Colour.WHITE) { //WHITE OR NOT SEEN
+					if(colour.get(x) == Colour.WHITE) { //WHITE OR NOT SEEN
 						if(x == w) continue; //non-cyclical
 						distance[x] = distance[w] + 1;
 						if(x == endVertex) return distance[endVertex]; //seen end point
-						this.colour.set(x, Colour.GREY); //SET TO GREY OR SEEN
+						colour.set(x, Colour.GREY); //SET TO GREY OR SEEN
 						q.add(x);
 					}
 				}
-				this.colour.set(w, Colour.BLACK); //SET TO BLACK
+				colour.set(w, Colour.BLACK); //SET TO BLACK
 			}
 			throw new Exception("BFS FAILED TO FIND THE END VERTEX");
 		}
