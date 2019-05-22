@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.lang.Integer;
 import java.lang.String;
 import java.lang.Exception;
+import java.util.Stack;
 
 public class MyCITS2200Project implements CITS2200Project {
 	//ENUMERATIONS
@@ -254,14 +255,107 @@ public class MyCITS2200Project implements CITS2200Project {
 	/*************************************************************/
 	private class MySCC {
 		//FIELDS
+		private Stack<Integer> stack;
+		private ArrayList<ArrayList<Integer>> scc;
+		private ArrayList<LinkedList<Integer>> transAdjList; //transposed adjacency list
+		private ArrayList<Colour> colour;
 
 		/**
 		 * CONSTRUCTOR OF STRONGLY CONNECTED COMPONENTS (SCC) CLASS.
 		 */
 		public MySCC() {
-
+			this.stack = new Stack<>();
+			this.scc = new ArrayList<>();
+			this.transAdjList = new ArrayList<>();
+			this.colour = MyCITS2200Project.this.colour;
 		}
 
+		/**
+		* Recursive DFS implementation starting at the vertex descriptor specified
+		* pushing to the stack 
+		* Colour.WHITE indicates node has not been visited.
+		* Colour.BLACK indicates node has been visited.
+		* @param node int vertex decriptor
+		*/
+		private void dfs(int node, int index) {
+			LinkedList<Integer> ll = transAdjList.get(node); //adjacently list for vertexs
+			ArrayList<Integer> al = this.scc.get(index); //ARRAYLIST CONTAINING VERTEX DESCRIPTOR OF SCCs
+			int x;
+			this.colour.set(node, Colour.BLACK);
+
+			while(ll.peek() != null) {
+				x = ll.remove();
+				al.add(x);
+				if(colour.get(x) == Colour.WHITE) //Colour.WHITE symbolises NOT VISITED
+					this.dfs(x);
+			}
+
+		}
+		
+		/**
+		* MUTATOR METHOD TRANSPOSING THE ADJACENCY LIST OF THE KNOWN GRAPH.
+		* s
+		*/
+		private void transpose() {
+			LinkedList<Integer> ll;
+			int vd, count;
+
+			int arrlen = MyCITS2200Project.this.edgeList.size();
+			for(int i = 0; i < arrlen; i++) {
+				ll = MyCITS2200Project.this.edgeList.get(i);
+				count = 0;
+				while(ll.peek() != null) {
+					vd = ll.remove();
+					this.transAdjList.get(count).add(vd); //order does not matter
+					count++;
+				}
+			}
+		}
+		/**
+		* Implements Kosaraju's algorithm performing a DFS twice on a predefined graph
+		* to list all strongly connected nodes/components
+		* @return array containing every strongly connected component (node descriptors)
+		*/
+		public int[][] getSCC() {
+			ArrayList<Colour> col = MyCITS2200Project.this.colour; //ALL NODES MARKED AS NOT VISITED
+			Stack<Integer> dfsStack;
+			LinkedList<Integer> ll;
+			int node, x;
+			//int size = MyCITS2200Project.this.maxvd;
+
+			//NON-RECURSIVE DFS IMPLEMENTATION
+			dfsStack.push(0); //starting at vertex descriptor 0
+			while(dfsStack.peek() != null) {
+				node = dfsStack.pop());
+				if(col.get(node) == Colour.WHITE) { //Colour.WHITE symbolises not visited
+					stack.push(node); //push node to stack
+					col.set(node, Colour.BLACK); //Colour.BLACK symblises visited
+					ll = MyCITS2200Project.edgeList.get(i); //GET ADJACENCY LIST FOR GRAPH
+					if(ll == null) continue; //no connected nodes
+					while(ll.peek() != null) { //ADD ALL CONNECTED NODES TO DFS STACK
+						x = ll.remove(); //CONNECTED NODE USE ITERATOR????
+						if(col.get(x) == Colour.WHITE) { //NOT VISITED
+							dfsStack.push(x);
+						}
+					}
+				}
+			}
+
+			//transpose graph
+
+			int numscc = 0; //SET NUMBER OF STRONGLY CONNECTED COMPONENTS TO ZERO
+			//CALLS RECURSIVE DFS IMPLEMENTATION
+			while(this.stack.peek() != null) {
+				node = this.stack.pop());
+				if(this.colour.get(node) == Colour.WHITE) { //NOT VISITED
+					this.scc.add(new ArrayList<>()); //NEW STRONGLY CONNECTED COMPONENT
+					this.dfs(node, numscc); //RECURSIVE DFS IMPLEMENTATION
+					numscc++;
+				}
+			}
+
+			return 
+		}
 
 	}
 }

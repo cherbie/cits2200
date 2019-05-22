@@ -16,4 +16,8 @@ PROJECT STATUS:
 
 ####################################
 QUESTIONS:
-    - [ans = YES] is a BFS garuanteed to have a shortest path outcome for each vertex? 
+    - [ans = YES] is a BFS garuanteed to have a shortest path outcome for each vertex?
+
+####################################
+SUGGESTIONS:
+    - USE ITERATOR FOR LINKEDLIST INSTEAD OF REMOVING AND ENQUEING AGAIN
