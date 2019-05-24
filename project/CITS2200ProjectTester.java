@@ -20,7 +20,7 @@ public class CITS2200ProjectTester {
 		loadGraph(proj, pathToGraphFile);
 
 		/** TESTING **/
-		printLookupTable(proj.wikiAddr);
+		printLookupTable(proj.wikiLookup);
 		printAdjacencyList(proj.edgeList, 8);
 
 		String startVertex = "/wiki/Multi-commodity_flow_problem";
@@ -73,7 +73,7 @@ public class CITS2200ProjectTester {
 	 * PRINT A CERTAIN ADJACENCY LIST OF THE ESTABLISHED GRAPH AND GIVEN NODE.
 	 * DEBUGGING FUNCTION.
 	 */
-	public static void printAdjacencyList(HashMap<Integer, LinkedList<Integer>> map, int node) {
+	public static void printAdjacencyList(ArrayList<LinkedList<Integer>> map, int node) {
 		LinkedList<Integer> ll = map.get(node);
 		int size = ll.size();
 		System.out.println("NODE :: " + node);
