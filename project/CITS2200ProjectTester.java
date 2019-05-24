@@ -21,10 +21,10 @@ public class CITS2200ProjectTester {
 
 		/** TESTING **/
 		printLookupTable(proj.wikiLookup);
-		printAdjacencyList(proj.edgeList, 8);
+		printAdjacencyList(proj.edgeList);
 
-		String startVertex = "/wiki/Multi-commodity_flow_problem";
-		String endVertex = "/wiki/Minimum-cost_flow_problem";
+		String startVertex = "/wiki/Push%E2%80%93relabel_maximum_flow_algorithm";
+		String endVertex = "/wiki/Network_simplex_algorithm";
 		int sp = proj.getShortestPath(startVertex, endVertex);
 		print("SHORTEST PATH BETWEEN: \n\t" + startVertex + "\n\t" + endVertex + "\n\t ==> " + sp);
 	}
@@ -62,10 +62,10 @@ public class CITS2200ProjectTester {
 	 * PRINT THE VERTEX DESCRIPTORS OF RECOGNISED WIKI ADDRESS NODES.
 	 * DEBUGGING FUNCTION
 	 */
-	public static void printLookupTable(ArrayList<String> al) {
-		int size = al.size();
-		for(int i = 0; i < size; i++) {
-			System.out.println("vertex descriptor:\t" + i + "\taddress:\t" + al.get(i));
+	public static void printLookupTable(HashMap<Integer, String> map) {
+		int size = map.size();
+		for(int i = 0; i < size; i++) { 
+			System.out.println("vertex descriptor:\t" + i + "\taddress:\t" + map.get(i));
 		}
 	}
 
@@ -73,12 +73,15 @@ public class CITS2200ProjectTester {
 	 * PRINT A CERTAIN ADJACENCY LIST OF THE ESTABLISHED GRAPH AND GIVEN NODE.
 	 * DEBUGGING FUNCTION.
 	 */
-	public static void printAdjacencyList(ArrayList<LinkedList<Integer>> map, int node) {
-		LinkedList<Integer> ll = map.get(node);
-		int size = ll.size();
-		System.out.println("NODE :: " + node);
-		for(int i = 0; i < size; i++) {
-			System.out.println("edge:\t" + ll.get(i));
+	public static void printAdjacencyList(ArrayList<LinkedList<Integer>> map) {
+		int size = map.size();
+		for(int node = 0; node < size; node++) { 
+			LinkedList<Integer> ll = map.get(node);
+			int len = ll.size();
+			for(int i = 0; i < len; i++) {
+				System.out.println("NODE:\t" + node + " edge:\t" + ll.get(i));
+			}		
 		}
+
 	}
 }

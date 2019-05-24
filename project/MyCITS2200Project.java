@@ -12,18 +12,20 @@ public class MyCITS2200Project implements CITS2200Project {
 	enum Colour {WHITE, GREY, BLACK;} //colours representing the states of a vertex
 
 	//FIELDS
-	public  ArrayList<String>                       wikiLookup; //LOOKUP TABLE
+	public  HashMap<Integer, String>                wikiLookup; //LOOKUP TABLE
 	private HashMap<String, Integer>			    nodeLookup;
 	private int                                     maxvd; //number of vertex descriptor (similar to file descriptor)
 	public  ArrayList<LinkedList<Integer>>          edgeList;
+	public  ArrayList<LinkedList<Integer>>			transEdgeList;
 	public  ArrayList<Colour>					    colour;
 
 	//CONSTRUCTOR
 	public MyCITS2200Project() {
-		this.wikiLookup = new ArrayList<>(10);
+		this.wikiLookup = new HashMap<>();
 		this.nodeLookup = new HashMap<>();
-		this.colour = new ArrayList<>(10);
-		this.edgeList = new ArrayList<>(10);
+		this.colour = new ArrayList<>();
+		this.edgeList = new ArrayList<>();
+		this.transEdgeList = new ArrayList<>();
 		this.maxvd = 0;
 	}
 
@@ -36,42 +38,53 @@ public class MyCITS2200Project implements CITS2200Project {
 	*/
 	public void addEdge(String urlFrom, String urlTo) {
 		//SEARCH PARENT
-		Integer parentvd, childvd;
-		try {
-			parentvd = this.nodeLookup.get(urlFrom);
-			maxvd++;
-		}
-		catch(Exception e) {
-			parentvd = this.maxvd;
-			this.wikiLookup.add(parentvd, urlFrom);
-			this.nodeLookup.put(urlFrom, parentvd);
-			this.edgeList.set(parentvd, new LinkedList<>());
-			this.colour.add(Colour.WHITE); //INITIALISE NODE TO NOT SEEN
-			//transpose matrix ?
-			this.maxvd++;
-		}
-		try {
-			childvd = this.nodeLookup.get(urlTo);
-			maxvd++;
-		}
-		catch(Exception e) {
-			childvd = this.maxvd;
-			this.wikiLookup.add(childvd, urlTo);
-			this.nodeLookup.put(urlTo, childvd);
-			this.colour.add(Colour.WHITE);
-			this.maxvd++;
-		}
+		Integer parentvd = this.nodeLookup.get(urlFrom);
+		Integer childvd = this.nodeLookup.get(urlTo);
+		
+		if(parentvd == null) parentvd = this.addParent(urlFrom);
+		if(childvd == null) childvd = this.addChild(urlTo);
+
 		//TODO --> REMOVE CYCLICAL CASE
 
 		//ADD VERTICE DESCRIPTORS TO LINKED LIST
 		//CHECK IF EDGE ALREADY EXISTS
-		if(!edgeList.get(parentvd).contains(childvd)) { //edge does not exist in LinkedList
-			edgeList.get(parentvd).add(childvd);
+		if(!this.edgeList.get(parentvd).contains(childvd)) { //edge does not exist in LinkedList
+			this.edgeList.get(parentvd).add(childvd);
+		}
+		if(!this.transEdgeList.get(childvd).contains(parentvd)) {
+			this.transEdgeList.get(childvd).add(parentvd);
 		}
 
 		//ADD VERTEX DESCRIPTOR TO TRANSPOSED ADJACENCY LIST
 		//Linked list already contains the edge
 		return;
+	}
+
+	/**
+	* ADD PARENT URL TO THE LOOKUP TABLE AND SET AS UNVISITED
+	*/
+	private Integer addParent(String urlFrom) {
+		LinkedList<Integer> ll = new LinkedList<>();
+		int vd = this.maxvd++;
+		this.wikiLookup.put(vd, urlFrom);
+		this.nodeLookup.put(urlFrom, vd);
+		this.edgeList.add(vd, ll);
+		this.transEdgeList.add(vd, ll);
+		this.colour.add(Colour.WHITE);
+		return vd;
+	}
+	/**
+	* ADD CHILD URL TO THE LOOKUP TABLE AND SET AS UNVISITED
+	*/
+	private Integer addChild(String urlTo) {
+		LinkedList<Integer> ll = new LinkedList<>();
+		int vd = this.maxvd++;
+		this.wikiLookup.put(vd, urlTo);
+		this.nodeLookup.put(urlTo, vd);
+		this.edgeList.add(vd, ll);
+		this.transEdgeList.add(vd, ll);
+		this.colour.add(Colour.WHITE);
+		return vd;
 	}
 
 	/**
