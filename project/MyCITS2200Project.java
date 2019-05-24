@@ -5,6 +5,7 @@ import java.lang.Integer;
 import java.lang.String;
 import java.lang.Exception;
 import java.util.Stack;
+import java.util.Iterator;
 
 public class MyCITS2200Project implements CITS2200Project {
 	//ENUMERATIONS
@@ -12,7 +13,7 @@ public class MyCITS2200Project implements CITS2200Project {
 
 	//FIELDS
 	public  ArrayList<String>                     wikiAddr; //LOOKUP TABLE
-	private int                                   maxvd; //number of vertice descriptor (similar to file descriptor)
+	private int                                   maxvd; //number of vertex descriptor (similar to file descriptor)
 	public  HashMap<Integer, LinkedList<Integer>> edgeList;
 	public  ArrayList<Colour>					  colour;
 
@@ -144,7 +145,7 @@ public class MyCITS2200Project implements CITS2200Project {
 	}
 
 	/*******************************************************************/
-	private class MyBFS<E> {
+	private class MyBFS {
 		//FIELDS
 		private int[] distance; 
 		private HashMap<Integer, LinkedList<Integer>> vertexEdges;
@@ -166,13 +167,13 @@ public class MyCITS2200Project implements CITS2200Project {
 		public void run(int startVertex) throws Exception {
 
 			LinkedList<Integer> q = new LinkedList<>(); //queue implementation
-			LinkedList<Integer> ll;
+			LinkedList<Integer> ll; //adjacency list implementation
 			ArrayList<Colour> colour = MyCITS2200Project.this.colour; //all nodes are set as unvisited
 			if(colour.size() < MyCITS2200Project.this.maxvd) throw new Exception("ALL NODES ARE NOT SET AS 'UNVISITED'.");
 			int w, x;
 
 			//BFS ALGORITHM
-			distance[startVertex] = 0;
+			this.distance[startVertex] = 0;
 			q.add(startVertex);
 			while(q.peek() != null) {
 				w = (int) q.remove(); //REMOVE FIRST ELEMENT IN THE QUEUE
@@ -180,9 +181,10 @@ public class MyCITS2200Project implements CITS2200Project {
 				ll = MyCITS2200Project.this.edgeList.get(w); //adjacency list for the node
 				if(ll == null) continue; //NO VALUE MAPPED TO KEY
 				System.out.println(ll.toString());
-				while(ll.peek() != null) {
+				Iterator<Integer> it = ll.listIterator(0);
+				while(it.hasNext()) {
 					//CONNECTED OR "CHILD" OF w
-					x = (int) ll.remove();
+					x = it.next();
 					if(x == w) continue; //non-cyclical
 					System.out.println(x);
 					if(colour.get(x) == Colour.WHITE) { //WHITE OR NOT SEEN
@@ -221,6 +223,7 @@ public class MyCITS2200Project implements CITS2200Project {
 
 			LinkedList<Integer> q = new LinkedList<>(); //queue implementation
 			LinkedList<Integer> ll;
+			Iterator<Integer> it;
 			int w, x;
 			ArrayList<Colour> colour = MyCITS2200Project.this.colour; //all nodes are set as unvisited
 			if(colour.size() < MyCITS2200Project.this.maxvd) throw new Exception("ALL NODES ARE NOT SET AS 'UNVISITED'.");
@@ -234,9 +237,10 @@ public class MyCITS2200Project implements CITS2200Project {
 				ll = MyCITS2200Project.this.edgeList.get(w); //adjacency list for the node
 				if(ll == null) continue; //NO VALUE MAPPED TO KEY
 				System.out.println(ll.toString());
-				while(ll.peek() != null) {
+				it = ll.listIterator(0); //iterator starting at the first element
+				while(it.hasNext()) {
 					//CONNECTED OR "CHILD" OF w
-					x = (int) ll.remove();
+					x = it.next();
 					System.out.println(x);
 					if(colour.get(x) == Colour.WHITE) { //WHITE OR NOT SEEN
 						if(x == w) continue; //non-cyclical
@@ -278,36 +282,36 @@ public class MyCITS2200Project implements CITS2200Project {
 		* @param node int vertex decriptor
 		*/
 		private void dfs(int node, int index) {
-			LinkedList<Integer> ll = transAdjList.get(node); //adjacently list for vertexs
-			ArrayList<Integer> al = this.scc.get(index); //ARRAYLIST CONTAINING VERTEX DESCRIPTOR OF SCCs
+			LinkedList<Integer> ll = transAdjList.get(node); //adjacently list for vertices
+			if(ll == null) return; //NO CONNECTED NODES TO ADD TO SCC
+			//ArrayList<Integer> al = this.scc.get(index); //ARRAYLIST CONTAINING NODE DESCRIPTOR OF SCCs
 			int x;
 			this.colour.set(node, Colour.BLACK);
 
 			while(ll.peek() != null) {
 				x = ll.remove();
-				al.add(x);
+				this.scc.get(index).add(x); //ADD NODE TO ARRAYLIST OF ARRAYLIST CONTAINING SCC's
 				if(colour.get(x) == Colour.WHITE) //Colour.WHITE symbolises NOT VISITED
-					this.dfs(x);
+					this.dfs(x, index);
 			}
-
 		}
 		
 		/**
 		* MUTATOR METHOD TRANSPOSING THE ADJACENCY LIST OF THE KNOWN GRAPH.
-		* s
+		* 
 		*/
 		private void transpose() {
-			LinkedList<Integer> ll;
-			int vd, count;
+			Iterator<Integer> it;
+			int vd;
 
-			int arrlen = MyCITS2200Project.this.edgeList.size();
-			for(int i = 0; i < arrlen; i++) {
-				ll = MyCITS2200Project.this.edgeList.get(i);
-				count = 0;
-				while(ll.peek() != null) {
-					vd = ll.remove();
-					this.transAdjList.get(count).add(vd); //order does not matter
-					count++;
+			int numEdges = MyCITS2200Project.this.edgeList.size();
+			for(int i = 0; i < numEdges; i++) { //CYCLE THROUGH EACH VERTEX AND ITS CONNECTIONS
+				if(MyCITS2200Project.this.edgeList.get(i) == null) continue; //NO DEFINED EDGES
+				it = MyCITS2200Project.this.edgeList.get(i).listIterator();
+				while(it.hasNext()) {
+					vd = it.next();
+					if(this.transAdjList.get(vd) == null) this.transAdjList.set(vd, new LinkedList<>());
+					this.transAdjList.get(vd).add(i); //order of adjcency list does not matter
 				}
 			}
 		}
@@ -316,24 +320,26 @@ public class MyCITS2200Project implements CITS2200Project {
 		* to list all strongly connected nodes/components
 		* @return array containing every strongly connected component (node descriptors)
 		*/
-		public int[][] getSCC() {
+		public ArrayList<ArrayList<Integer>> getSCC() {
 			ArrayList<Colour> col = MyCITS2200Project.this.colour; //ALL NODES MARKED AS NOT VISITED
-			Stack<Integer> dfsStack;
+			Stack<Integer> dfsStack = new Stack<>();
 			LinkedList<Integer> ll;
+			Iterator<Integer> it;
 			int node, x;
 			//int size = MyCITS2200Project.this.maxvd;
 
 			//NON-RECURSIVE DFS IMPLEMENTATION
 			dfsStack.push(0); //starting at vertex descriptor 0
 			while(dfsStack.peek() != null) {
-				node = dfsStack.pop());
+				node = dfsStack.pop();
 				if(col.get(node) == Colour.WHITE) { //Colour.WHITE symbolises not visited
 					stack.push(node); //push node to stack
 					col.set(node, Colour.BLACK); //Colour.BLACK symblises visited
-					ll = MyCITS2200Project.edgeList.get(i); //GET ADJACENCY LIST FOR GRAPH
+					ll = MyCITS2200Project.this.edgeList.get(node); //GET ADJACENCY LIST FOR GRAPH
 					if(ll == null) continue; //no connected nodes
-					while(ll.peek() != null) { //ADD ALL CONNECTED NODES TO DFS STACK
-						x = ll.remove(); //CONNECTED NODE USE ITERATOR????
+					it = ll.listIterator();
+					while(it.hasNext()) { //ADD ALL CONNECTED NODES TO DFS STACK
+						x = it.next(); //CONNECTED NODE USE ITERATOR????
 						if(col.get(x) == Colour.WHITE) { //NOT VISITED
 							dfsStack.push(x);
 						}
@@ -342,11 +348,12 @@ public class MyCITS2200Project implements CITS2200Project {
 			}
 
 			//transpose graph
+			this.transpose();
 
 			int numscc = 0; //SET NUMBER OF STRONGLY CONNECTED COMPONENTS TO ZERO
 			//CALLS RECURSIVE DFS IMPLEMENTATION
 			while(this.stack.peek() != null) {
-				node = this.stack.pop());
+				node = this.stack.pop();
 				if(this.colour.get(node) == Colour.WHITE) { //NOT VISITED
 					this.scc.add(new ArrayList<>()); //NEW STRONGLY CONNECTED COMPONENT
 					this.dfs(node, numscc); //RECURSIVE DFS IMPLEMENTATION
@@ -354,8 +361,10 @@ public class MyCITS2200Project implements CITS2200Project {
 				}
 			}
 
-			return 
+			return this.scc;
 		}
-
 	}
+
+/*************************************************************************/
+
 }
