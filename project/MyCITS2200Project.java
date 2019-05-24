@@ -149,12 +149,7 @@ public class MyCITS2200Project implements CITS2200Project {
 	public String[][] getStronglyConnectedComponents() {
 		try {
 			MySCC myscc = new MySCC();
-			ArrayList<ArrayList<Integer>> scc = myscc.getSCC();
-			Iterator<Integer> internalIt;
-			Iterator<ArrayList<Integer>> externalIt = scc.iterator();
-			while(externalIt.hasNext()) {
-				break;
-			}
+			return myscc.getSCC();
 		} catch(Exception e) {
 			System.out.println(e.toString());
 		}
@@ -289,7 +284,6 @@ public class MyCITS2200Project implements CITS2200Project {
 		private Stack<Integer> stack;
 		private ArrayList<ArrayList<Integer>> scc; 
 		private String[][] arrscc;
-		private ArrayList<LinkedList<Integer>> transAdjList; //transposed adjacency list
 		private ArrayList<Colour> colour;
 
 		/**
@@ -299,7 +293,6 @@ public class MyCITS2200Project implements CITS2200Project {
 			int numNodes = MyCITS2200Project.this.maxvd;
 			this.stack = new Stack<>();
 			this.scc = new ArrayList<>();
-			this.transAdjList = new ArrayList<>();
 			this.arrscc = new String[numNodes][numNodes];
 			this.colour = MyCITS2200Project.this.colour;
 		}
@@ -312,26 +305,25 @@ public class MyCITS2200Project implements CITS2200Project {
 		* @param node int vertex decriptor
 		* @param index the group id of the strongly connected components
 		*/
-		private void dfs(int node, int index) {
-			LinkedList<Integer> ll = transAdjList.get(node); //adjacently list for vertices
-			if(ll.size() <= 0) return; //NO CONNECTED NODES TO ADD TO SCC
+		private void dfs(int node, int index, int count) {
+			LinkedList<Integer> ll = MyCITS2200Project.this.transEdgeList.get(node); //transposed adjacently list for vertices
+			if(ll.isEmpty()) return; //NO CONNECTED NODES TO ADD TO SCC
 			Iterator<Integer> it = ll.listIterator();
 			//ArrayList<E> al = this.scc.get(index); //ARRAYLIST CONTAINING NODE DESCRIPTOR OF SCCs
 			this.colour.set(node, Colour.BLACK);
-			int count = 0;
 			while(it.hasNext()) {
 				int vd = it.next();
-				this.scc.get(index).add(vd); //ADD NODE TO ARRAYLIST OF ARRAYLIST CONTAINING SCC's
-				this.arrscc[index][count++] = MyCITS2200Project.this.wikiLookup.get(vd);
-				if(colour.get(vd) == Colour.WHITE) //Colour.WHITE symbolises NOT VISITED
-					this.dfs(vd, index);
+				//this.scc.get(index).add(vd); //ADD NODE TO ARRAYLIST OF ARRAYLIST CONTAINING SCC's
+				this.arrscc[index][count] = MyCITS2200Project.this.wikiLookup.get(vd);
+				if(this.colour.get(vd) == Colour.WHITE) //Colour.WHITE symbolises NOT VISITED
+					this.dfs(vd, index, ++count);
 			}
 		}
 		
 		/**
 		* MUTATOR METHOD TRANSPOSING THE ADJACENCY LIST OF THE KNOWN GRAPH.
 		* VERY EXPENSIVE CANNOT DO THIS!!!
-		*/
+		
 		private void transpose() {
 			Iterator<Integer> it;
 			int vd;
@@ -342,17 +334,19 @@ public class MyCITS2200Project implements CITS2200Project {
 				it = MyCITS2200Project.this.edgeList.get(i).listIterator();
 				while(it.hasNext()) {
 					vd = it.next();
-					if(this.transAdjList.get(vd) == null) this.transAdjList.set(vd, new LinkedList<>());
+					if(MyCITS2200Project.this.transEdgeList.get(vd).isEmpty()) this.transAdjList.set(vd, new LinkedList<>());
 					this.transAdjList.get(vd).add(i); //order of adjcency list does not matter
 				}
 			}
 		}
+		*/
+		
 		/**
 		* Implements Kosaraju's algorithm performing a DFS twice on a predefined graph
 		* to list all strongly connected nodes/components
 		* @return array containing every strongly connected component (node descriptors)
 		*/
-		public ArrayList<ArrayList<Integer>> getSCC() {
+		public String[][] getSCC() {
 			ArrayList<Colour> col = MyCITS2200Project.this.colour; //ALL NODES MARKED AS NOT VISITED
 			Stack<Integer> dfsStack = new Stack<>();
 			LinkedList<Integer> ll;
@@ -362,10 +356,10 @@ public class MyCITS2200Project implements CITS2200Project {
 
 			//NON-RECURSIVE DFS IMPLEMENTATION
 			dfsStack.push(0); //starting at vertex descriptor 0
-			while(dfsStack.peek() != null) {
+			while(!dfsStack.empty()) {
 				node = dfsStack.pop();
 				if(col.get(node) == Colour.WHITE) { //Colour.WHITE symbolises not visited
-					stack.push(node); //push node to stack
+					this.stack.push(node); //push node to stack
 					col.set(node, Colour.BLACK); //Colour.BLACK symblises visited
 					it = MyCITS2200Project.this.edgeList.get(node).listIterator(0); //ITERATOR OVER ADJACENCY LIST
 					while(it.hasNext()) { //ADD ALL CONNECTED NODES TO DFS STACK
@@ -377,19 +371,18 @@ public class MyCITS2200Project implements CITS2200Project {
 				}
 			}
 
-			//transpose graph
-			this.transpose();
+			//transposition handled in MyCITS2200Projct.addEdge()
 
 			int numscc = 0; //SET NUMBER OF STRONGLY CONNECTED COMPONENTS TO ZERO
 			//CALLS RECURSIVE DFS IMPLEMENTATION
-			while(this.stack.peek() != null) {
+			while(!this.stack.empty()) {
 				node = this.stack.pop();
 				if(this.colour.get(node) == Colour.WHITE) { //NOT VISITED
-					this.scc.add(new ArrayList<>()); //NEW STRONGLY CONNECTED COMPONENT
-					this.dfs(node, numscc++); //RECURSIVE DFS IMPLEMENTATION
+					//this.scc.add(new ArrayList<>()); //NEW STRONGLY CONNECTED COMPONENT
+					this.dfs(node, numscc++, 0); //RECURSIVE DFS IMPLEMENTATION
 				}
 			}
-			return this.scc;
+			return this.arrscc;
 		}
 	}
 

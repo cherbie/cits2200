@@ -23,10 +23,9 @@ public class CITS2200ProjectTester {
 		printLookupTable(proj.wikiLookup);
 		printAdjacencyList(proj.edgeList);
 
-		String startVertex = "/wiki/Push%E2%80%93relabel_maximum_flow_algorithm";
-		String endVertex = "/wiki/Network_simplex_algorithm";
-		int sp = proj.getShortestPath(startVertex, endVertex);
-		print("SHORTEST PATH BETWEEN: \n\t" + startVertex + "\n\t" + endVertex + "\n\t ==> " + sp);
+		print("TESTING");
+		getShortestPath(proj);
+		getSCC(proj);
 	}
 	
 	/**
@@ -82,6 +81,32 @@ public class CITS2200ProjectTester {
 				System.out.println("NODE:\t" + node + " edge:\t" + ll.get(i));
 			}		
 		}
+	}
 
+	/**
+	* TEST AND PRINT OUT THE SHORTEST PATH BETWEEN TWO DEFINED NODES.
+	**/
+	public static void getShortestPath(CITS2200Project cits) {
+		String startVertex = "/wiki/Push%E2%80%93relabel_maximum_flow_algorithm";
+		String endVertex = "/wiki/Network_simplex_algorithm";
+
+		int sp = cits.getShortestPath(startVertex, endVertex);
+		print("SHORTEST PATH BETWEEN: \n\t" + startVertex + "\n\t" + endVertex + "\n\t ==> " + sp);
+	}
+
+	/**
+	* TEST AND PRINT OUT THE STRONGLY CONNECTED COMPONENTS OF THE GIVEN GRAPH
+	**/
+	public static void getSCC(CITS2200Project cits) {
+		String[][] scc = cits.getStronglyConnectedComponents();
+		int size = scc.length;
+		int n = scc[0].length;
+		print("STRONGLY CONNECTED COMPONENTS TESTING:");
+		for(int i = 0; i < size; i++) {
+			print("COMPONENT:\t" + i);
+			for(int y = 0; y < n; y++) {
+				print("-> " + scc[i][y]);
+			}
+		}
 	}
 }
