@@ -13,7 +13,7 @@ public class CITS2200ProjectTester {
 	 */
 	public static void main(String[] args) {
 		// Change this to be the path to the graph file.
-		String pathToGraphFile = "./graph2.in";
+		String pathToGraphFile = "./graph1.in";
 		// Create an instance of your implementation.
 		MyCITS2200Project proj = new MyCITS2200Project();
 		// Load the graph into the project.
@@ -24,7 +24,7 @@ public class CITS2200ProjectTester {
 		printAdjacencyList(proj.edgeList);
 
 		print("TESTING");
-		getShortestPath(proj, "NODE1", "NODE3");
+		getShortestPath(proj, "NODE1", "NODE4");
 		getSCC(proj.getStronglyConnectedComponents());
 	}
 	
@@ -101,9 +101,10 @@ public class CITS2200ProjectTester {
 	public static void getSCC(String[][] scc) {
 		//String[][] scc = cits.getStronglyConnectedComponents();
 		int size = scc.length;
-		int n = scc[0].length;
+		int n;
 		print("STRONGLY CONNECTED COMPONENTS TESTING:");
 		for(int i = 0; i < size; i++) {
+			n = scc[i].length;
 			print("COMPONENT:\t" + i);
 			for(int y = 0; y < n; y++) {
 				print("-> " + scc[i][y]);

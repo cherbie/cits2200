@@ -315,8 +315,7 @@ public class MyCITS2200Project implements CITS2200Project {
 	/*************************************************************/
 	private class MySCC {
 		//FIELDS
-		private Stack<Integer> stack;
-		private ArrayList<ArrayList<Integer>> scc; 
+		private ArrayList<ArrayList<String>> scc; 
 		private String[][] arrscc;
 		private ArrayList<Colour> colour;
 
@@ -325,7 +324,6 @@ public class MyCITS2200Project implements CITS2200Project {
 		 */
 		public MySCC() {
 			int numNodes = MyCITS2200Project.this.maxvd;
-			this.stack = new Stack<>();
 			this.scc = new ArrayList<>();
 			this.arrscc = new String[numNodes][numNodes];
 			this.colour = (ArrayList<Colour>) MyCITS2200Project.deepCopy(MyCITS2200Project.this.colour); //all nodes are set as unvisited
@@ -347,38 +345,14 @@ public class MyCITS2200Project implements CITS2200Project {
 			System.out.println("TRANS EDGE LIST: " + node + "\t");
 			this.arrscc[index][count] = MyCITS2200Project.this.wikiLookup.get(node);
 
-			//ArrayList<E> al = this.scc.get(index); //ARRAYLIST CONTAINING NODE DESCRIPTOR OF SCCs
 			this.colour.set(node, Colour.BLACK);
 			while(it.hasNext()) {
 				int vd = it.next();
 				System.out.println("NEXT=\t" + vd + "COLOUR=\t" + this.colour.get(vd));
-
-				//this.scc.get(index).add(vd); //ADD NODE TO ARRAYLIST OF ARRAYLIST CONTAINING SCC's
 				if(Colour.WHITE.equals(this.colour.get(vd))) //Colour.WHITE symbolises NOT VISITED
 					this.dfs(vd, index, count+1);
 			}
 		}
-		
-		/**
-		* MUTATOR METHOD TRANSPOSING THE ADJACENCY LIST OF THE KNOWN GRAPH.
-		* VERY EXPENSIVE CANNOT DO THIS!!!
-		
-		private void transpose() {
-			Iterator<Integer> it;
-			int vd;
-
-			int numEdges = MyCITS2200Project.this.edgeList.size();
-			for(int i = 0; i < numEdges; i++) { //CYCLE THROUGH EACH VERTEX AND ITS CONNECTIONS
-				if(MyCITS2200Project.this.edgeList.get(i) == null) continue; //NO DEFINED EDGES
-				it = MyCITS2200Project.this.edgeList.get(i).listIterator();
-				while(it.hasNext()) {
-					vd = it.next();
-					if(MyCITS2200Project.this.transEdgeList.get(vd).isEmpty()) this.transAdjList.set(vd, new LinkedList<>());
-					this.transAdjList.get(vd).add(i); //order of adjcency list does not matter
-				}
-			}
-		}
-		*/
 		
 		/**
 		* Implements Kosaraju's algorithm performing a DFS twice on a predefined graph
@@ -388,20 +362,21 @@ public class MyCITS2200Project implements CITS2200Project {
 		public String[][] getSCC() {
 			ArrayList<Colour> col = (ArrayList<Colour>) MyCITS2200Project.deepCopy(MyCITS2200Project.this.colour); //all nodes are set as unvisited
 			System.out.println(col.get(1));
+			LinkedList<Integer> queue = new LinkedList<>(); //QUEUE TO RETRACE ORDER OF FIRST DFS
 			Stack<Integer> dfsStack = new Stack<>();
 			Iterator<Integer> it;
 			Integer node, x;
 			//int size = MyCITS2200Project.this.maxvd;
 
 			//NON-RECURSIVE DFS IMPLEMENTATION
-			node = new Integer(1);
+			node = new Integer(0);
 			dfsStack.push(node); //starting at vertex descriptor 0
 			while(!dfsStack.empty()) {
 				node = dfsStack.pop();
 				System.out.println("Node popped " + node);
 				if(Colour.WHITE.equals(col.get(node))) { //Colour.WHITE symbolises not visited
-				System.out.println("node not seen");
-					this.stack.push(node); //push node to stack
+					System.out.println("node not seen");
+					queue.add(node); //push node to stack
 					col.set(node, Colour.BLACK); //Colour.BLACK symblises visited
 					if(MyCITS2200Project.this.edgeList.get(node) == null) continue;
 					it = MyCITS2200Project.this.edgeList.get(node).listIterator(0); //ITERATOR OVER ADJACENCY LIST
@@ -421,11 +396,10 @@ public class MyCITS2200Project implements CITS2200Project {
 			int numscc = 0; //SET NUMBER OF STRONGLY CONNECTED COMPONENTS TO ZERO
 			//CALLS RECURSIVE DFS IMPLEMENTATION
 			System.out.println("REACHED 2nd DFS");
-			while(!this.stack.empty()) {
-				node = this.stack.pop();
+			while(!queue.isEmpty()) {
+				node = queue.remove();
 				System.out.println("2nd DFS :: NODE=\t" + node + " COLOUR=\t" + this.colour.get(node));
 				if(Colour.WHITE.equals(this.colour.get(node))) { //NOT VISITED
-					//this.scc.add(new ArrayList<>()); //NEW STRONGLY CONNECTED COMPONENT
 					this.dfs(node, numscc, 0); //RECURSIVE DFS IMPLEMENTATION
 					numscc++;
 					System.out.println();
