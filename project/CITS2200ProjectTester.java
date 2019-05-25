@@ -13,7 +13,7 @@ public class CITS2200ProjectTester {
 	 */
 	public static void main(String[] args) {
 		// Change this to be the path to the graph file.
-		String pathToGraphFile = "./example_graph.in";
+		String pathToGraphFile = "./graph2.in";
 		// Create an instance of your implementation.
 		MyCITS2200Project proj = new MyCITS2200Project();
 		// Load the graph into the project.
@@ -24,8 +24,8 @@ public class CITS2200ProjectTester {
 		printAdjacencyList(proj.edgeList);
 
 		print("TESTING");
-		getShortestPath(proj);
-		getSCC(proj);
+		getShortestPath(proj, "NODE1", "NODE3");
+		getSCC(proj.getStronglyConnectedComponents());
 	}
 	
 	/**
@@ -76,9 +76,10 @@ public class CITS2200ProjectTester {
 		int size = map.size();
 		for(int node = 0; node < size; node++) { 
 			LinkedList<Integer> ll = map.get(node);
+			if(ll == null) continue;
 			int len = ll.size();
 			for(int i = 0; i < len; i++) {
-				System.out.println("NODE:\t" + node + " edge:\t" + ll.get(i));
+				System.out.println(node + " " + ll.get(i));
 			}		
 		}
 	}
@@ -86,9 +87,9 @@ public class CITS2200ProjectTester {
 	/**
 	* TEST AND PRINT OUT THE SHORTEST PATH BETWEEN TWO DEFINED NODES.
 	**/
-	public static void getShortestPath(CITS2200Project cits) {
-		String startVertex = "/wiki/Push%E2%80%93relabel_maximum_flow_algorithm";
-		String endVertex = "/wiki/Network_simplex_algorithm";
+	public static void getShortestPath(CITS2200Project cits, String str1, String str2) {
+		String startVertex = str1;
+		String endVertex = str2;
 
 		int sp = cits.getShortestPath(startVertex, endVertex);
 		print("SHORTEST PATH BETWEEN: \n\t" + startVertex + "\n\t" + endVertex + "\n\t ==> " + sp);
@@ -97,8 +98,8 @@ public class CITS2200ProjectTester {
 	/**
 	* TEST AND PRINT OUT THE STRONGLY CONNECTED COMPONENTS OF THE GIVEN GRAPH
 	**/
-	public static void getSCC(CITS2200Project cits) {
-		String[][] scc = cits.getStronglyConnectedComponents();
+	public static void getSCC(String[][] scc) {
+		//String[][] scc = cits.getStronglyConnectedComponents();
 		int size = scc.length;
 		int n = scc[0].length;
 		print("STRONGLY CONNECTED COMPONENTS TESTING:");
