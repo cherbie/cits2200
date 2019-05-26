@@ -7,13 +7,16 @@ import java.util.*;
 
 public class CITS2200ProjectTester {
 	private MyCITS2200Project myProj;
+	private static final boolean SP = false;
+	private static final boolean SCC = false;
+	private static final boolean HAM = true;
 
 	/** 
 	 * MAIN FUNCTION
 	 */
 	public static void main(String[] args) {
 		// Change this to be the path to the graph file.
-		String pathToGraphFile = "./graph1.in";
+		String pathToGraphFile = "./ham_graph.in";
 		// Create an instance of your implementation.
 		MyCITS2200Project proj = new MyCITS2200Project();
 		// Load the graph into the project.
@@ -24,8 +27,12 @@ public class CITS2200ProjectTester {
 		printAdjacencyList(proj.edgeList);
 
 		print("TESTING");
-		getShortestPath(proj, "NODE1", "NODE4");
-		getSCC(proj.getStronglyConnectedComponents());
+		if(SP)
+			getShortestPath(proj, "NODE1", "NODE4");
+		if(SCC)
+			getSCC(proj.getStronglyConnectedComponents());
+		if(HAM)
+			getHamPath(proj.getHamiltonianPath());
 	}
 	
 	/**
@@ -45,7 +52,7 @@ public class CITS2200ProjectTester {
 			}
 		} catch (Exception e) {
 			System.out.println("There was a problem:");
-			System.out.println(e.toString());
+			e.printStackTrace();
 		}
 	}
 
@@ -109,6 +116,14 @@ public class CITS2200ProjectTester {
 			for(int y = 0; y < n; y++) {
 				print("-> " + scc[i][y]);
 			}
+		}
+	}
+
+	public static void getHamPath(String[] hp) {
+		int size = hp.length;
+		print("HAMILTONIAN PATH TESTING:");
+		for(int i = 0; i < size; i++) {
+			print("->\t" + hp[i]);
 		}
 	}
 }

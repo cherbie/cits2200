@@ -11,6 +11,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
+import java.util.BitSet;
+import java.nio.ByteBuffer;
+import java.lang.Boolean;
 
 enum Colour {WHITE, GREY, BLACK;} //colours representing the states of a vertex
 
@@ -23,6 +26,7 @@ public class MyCITS2200Project implements CITS2200Project {
 	private int                                     maxvd; //number of vertex descriptor (similar to file descriptor)
 	public  ArrayList<LinkedList<Integer>>          edgeList;
 	public  ArrayList<LinkedList<Integer>>			transEdgeList;
+	private Boolean[][]								adjMatrix;
 	public  ArrayList<Colour>						colour;
 
 	//CONSTRUCTOR
@@ -32,6 +36,7 @@ public class MyCITS2200Project implements CITS2200Project {
 		this.colour = new ArrayList<>();
 		this.edgeList = new ArrayList<>();
 		this.transEdgeList = new ArrayList<>();
+		this.adjMatrix = new Boolean[20][20]; //QUESTION SPECIFIED NODE RESTRICTED TO 20
 		this.maxvd = 0;
 	}
 
@@ -73,12 +78,15 @@ public class MyCITS2200Project implements CITS2200Project {
 		//ADD VERTICE DESCRIPTORS TO LINKED LIST
 		//CHECK IF EDGE ALREADY EXISTS
 		if(this.edgeList.get(parentvd) == null) {
-			System.out.println("true");
 			this.edgeList.set(parentvd, new LinkedList<>());
 		}
 		if(!this.edgeList.get(parentvd).contains(childvd)) { //edge does not exist in LinkedList
 			this.edgeList.get(parentvd).add(childvd);
 		}
+		System.out.println(childvd);
+
+		this.adjMatrix[parentvd][childvd] = Boolean.TRUE;
+
 		if(this.transEdgeList.get(childvd) == null) {
 			System.out.println("true");
 			this.transEdgeList.set(childvd, new LinkedList<>());
@@ -201,6 +209,8 @@ public class MyCITS2200Project implements CITS2200Project {
 	* @return a Hamiltonian path of the page graph.
 	*/
 	public String[] getHamiltonianPath() {
+		DPHamiltonian ham = new DPHamiltonian(this.maxvd);
+		System.out.println("DOES A HAMILTONIAN PATH EXIST:\n\t" + Boolean.toString(ham.pathExists()));
 		return new String[1];
 	}
 
@@ -411,4 +421,55 @@ public class MyCITS2200Project implements CITS2200Project {
 
 /*************************************************************************/
 
+	public class DPHamiltonian {
+		private int 							MAXNODES;
+		private ArrayList<BitSet> 				dp;
+		private Boolean[][] 				 	adj;
+		//Array of bitsets?
+		
+		public DPHamiltonian(int numNodes) {
+			this.MAXNODES = numNodes;
+			this.dp = new ArrayList<>(numNodes); //INITIALISE VERTICES
+			this.adj = MyCITS2200Project.this.adjMatrix;
+		}
+
+		private void initialiseBitSet() {
+			for(int i = 0; i < MAXNODES; i++) {
+				this.dp.add(i, new BitSet(1<<MAXNODES)); //CREATE THE "MASK"
+			}
+		}
+
+		private boolean pathExists() {
+			this.initialiseBitSet();
+			for(int i = 0; i < this.MAXNODES; i++) {
+				this.dp.get(i).set(i); //SETS THE BIT SPECIFIED TO true
+			}
+			BitSet bs; //bitsetj;
+			for(int i = 0; i < (1<<this.MAXNODES); i++) { //CYCLE THROUGH EACH MASK/SUBSET OF THE VERTICES
+				ByteBuffer bb = ByteBuffer.allocate(1 << this.MAXNODES);
+				bb.putInt(i);
+				bs = BitSet.valueOf(bb);
+				for(int j = 0; j < this.MAXNODES; j++) {
+					//bitsetj = BitSet.valueOf(bb);
+					if(bs.get(j)) { //If jth bit is set in i (WHICH OF THE VERTICES ARE PRESENT IN THE SUBSET) // i & (1<<j)
+						for(int k = 0; k < this.MAXNODES; k++) {
+							if(bs.get(1 << k) && this.adj[k][j] && k != j) {
+								if(this.dp.get(k).get(j)) { //dp[k][i ^ (1<<j)]
+									this.dp.get(j).set(i);
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+
+			for(int i = 0; i < this.MAXNODES; i++) {
+				if(this.dp.get(i).get((1<<this.MAXNODES) - 1)) {
+					return true;
+				}
+			}
+			return false;
+		}
+	}
 }
