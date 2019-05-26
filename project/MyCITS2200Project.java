@@ -26,7 +26,7 @@ public class MyCITS2200Project implements CITS2200Project {
 	private int                                     maxvd; //number of vertex descriptor (similar to file descriptor)
 	public  ArrayList<LinkedList<Integer>>          edgeList;
 	public  ArrayList<LinkedList<Integer>>			transEdgeList;
-	private Boolean[][]								adjMatrix;
+	private boolean[][]								adjMatrix;
 	public  ArrayList<Colour>						colour;
 
 	//CONSTRUCTOR
@@ -36,7 +36,7 @@ public class MyCITS2200Project implements CITS2200Project {
 		this.colour = new ArrayList<>();
 		this.edgeList = new ArrayList<>();
 		this.transEdgeList = new ArrayList<>();
-		this.adjMatrix = new Boolean[20][20]; //QUESTION SPECIFIED NODE RESTRICTED TO 20
+		this.adjMatrix = new boolean[20][20]; //QUESTION SPECIFIED NODE RESTRICTED TO 20
 		this.maxvd = 0;
 	}
 
@@ -85,7 +85,7 @@ public class MyCITS2200Project implements CITS2200Project {
 		}
 		System.out.println(childvd);
 
-		this.adjMatrix[parentvd][childvd] = Boolean.TRUE;
+		this.adjMatrix[parentvd][childvd] = true;
 
 		if(this.transEdgeList.get(childvd) == null) {
 			System.out.println("true");
@@ -424,13 +424,15 @@ public class MyCITS2200Project implements CITS2200Project {
 	public class DPHamiltonian {
 		private int 							MAXNODES;
 		private ArrayList<BitSet> 				dp;
-		private Boolean[][] 				 	adj;
+		private boolean[][] 				 	adj;
+		private String[]						path;
 		//Array of bitsets?
 		
 		public DPHamiltonian(int numNodes) {
 			this.MAXNODES = numNodes;
 			this.dp = new ArrayList<>(numNodes); //INITIALISE VERTICES
 			this.adj = MyCITS2200Project.this.adjMatrix;
+			this.path = new String[20];
 		}
 
 		private void initialiseBitSet() {
@@ -442,19 +444,25 @@ public class MyCITS2200Project implements CITS2200Project {
 		private boolean pathExists() {
 			this.initialiseBitSet();
 			for(int i = 0; i < this.MAXNODES; i++) {
-				this.dp.get(i).set(i); //SETS THE BIT SPECIFIED TO true
+				this.dp.get(i).set(1 << i); //SETS THE BIT SPECIFIED TO true
 			}
-			BitSet bs; //bitsetj;
-			for(int i = 0; i < (1<<this.MAXNODES); i++) { //CYCLE THROUGH EACH MASK/SUBSET OF THE VERTICES
-				ByteBuffer bb = ByteBuffer.allocate(1 << this.MAXNODES);
-				bb.putInt(i);
-				bs = BitSet.valueOf(bb);
+			for(int i = 0; i < this.MAXNODES; i++) {
 				for(int j = 0; j < this.MAXNODES; j++) {
-					//bitsetj = BitSet.valueOf(bb);
-					if(bs.get(j)) { //If jth bit is set in i (WHICH OF THE VERTICES ARE PRESENT IN THE SUBSET) // i & (1<<j)
+					System.out.println(i + " + " + j + " = " + this.adj[i][j]);
+				}
+			}
+			//BitSet bs; //bitsetj;
+			for(int i = 0; i < (1<<this.MAXNODES); i++) { //CYCLE THROUGH EACH MASK/SUBSET OF THE VERTICES
+				System.out.println("NEXT MASK");
+				for(int j = 0; j < this.MAXNODES; j++) {
+					if((i & (1 << j)) != 0) { //If jth bit is set in i (WHICH OF THE VERTICES ARE PRESENT IN THE SUBSET) // i & (1<<j)
+						System.out.println("bs.get(j) is true.");
 						for(int k = 0; k < this.MAXNODES; k++) {
-							if(bs.get(1 << k) && this.adj[k][j] && k != j) {
-								if(this.dp.get(k).get(j)) { //dp[k][i ^ (1<<j)]
+							System.out.println("adjacency:\t" + this.adj[k][j]);
+							if( ((i & (1 << k)) != 0) && this.adj[k][j] && k != j) {
+								//System.out.println("bs.get(k) = " + bs.get(k) + " Adjacency:\t" + this.adj[k][j]);
+								if(this.dp.get(k).get((i ^ (1 << j)))) { //dp[k][i ^ (1<<j)]
+									System.out.println("entered\n");
 									this.dp.get(j).set(i);
 									break;
 								}
@@ -465,11 +473,21 @@ public class MyCITS2200Project implements CITS2200Project {
 			}
 
 			for(int i = 0; i < this.MAXNODES; i++) {
+				System.out.println("MASK 15 bit value =\t" + this.dp.get(i).get((1 << this.MAXNODES) - 1));
+			}
+
+			for(int i = 0; i < this.MAXNODES; i++) {
+				System.out.println("Bit value at [" + i + "][" + ((1<<this.MAXNODES) -1) + "] = " + this.dp.get(i).get((1<<this.MAXNODES) -1));
 				if(this.dp.get(i).get((1<<this.MAXNODES) - 1)) {
 					return true;
 				}
 			}
+
 			return false;
+		}
+
+		public String[] getPath() {
+			return this.path;
 		}
 	}
 }

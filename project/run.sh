@@ -2,5 +2,5 @@
 FILE=CITS2200ProjectTester
 #
 clear
-java $FILE
+java $FILE $1
 echo "END OF SCRIPT"
