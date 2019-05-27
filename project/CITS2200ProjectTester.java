@@ -128,10 +128,10 @@ public class CITS2200ProjectTester {
 	}
 
 	public static void printDP(ArrayList<BitSet> arr, int n) {
-			for(int i = 0; i < n; i++) {
-				for(int j = 0; j < (1 << n); j++) {
-					System.out.println("dp[" + i + "][" + j + "] =\t" + arr.get(i).get(j));
-				}
+		for(int i = 0; i < n; i++) {
+			for(int j = 0; j < (1 << n); j++) {
+				System.out.println("dp[" + i + "][" + j + "] =\t" + arr.get(i).get(j));
 			}
 		}
+	}
 }

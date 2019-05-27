@@ -71,7 +71,10 @@ public class MyCITS2200Project implements CITS2200Project {
 		Integer childvd = this.nodeLookup.get(urlTo);
 		
 		if(parentvd == null) parentvd = this.addParent(urlFrom);
-		if(childvd == null) childvd = this.addChild(urlTo);
+		if(childvd == null && !urlFrom.equals(urlTo)) childvd = this.addChild(urlTo);
+		else if(childvd == null) { 
+			childvd = parentvd;
+		}
 
 		//TODO --> REMOVE CYCLICAL CASE
 
@@ -210,8 +213,14 @@ public class MyCITS2200Project implements CITS2200Project {
 	*/
 	public String[] getHamiltonianPath() {
 		DPHamiltonian ham = new DPHamiltonian(this.maxvd);
-		System.out.println("DOES A HAMILTONIAN PATH EXIST:\n\t" + Boolean.toString(ham.pathExists()));
-		return new String[1];
+		if(ham.pathExists()) {
+			System.out.println("Hamiltonian path EXISTS");
+			return ham.getPath();
+		}
+		else {
+			System.out.println("Hamiltonian path does NOT EXIST");
+			return new String[1];
+		}
 	}
 
 	/*******************************************************************/
@@ -446,26 +455,34 @@ public class MyCITS2200Project implements CITS2200Project {
 			for(int i = 0; i < this.MAXNODES; i++) {
 				this.dp.get(i).set(1 << i); //SETS THE BIT SPECIFIED TO true
 			}
-			for(int i = 0; i < this.MAXNODES; i++) {
-				for(int j = 0; j < this.MAXNODES; j++) {
-					System.out.println(i + " + " + j + " = " + this.adj[i][j]);
-				}
-			}
 
+			for(int i = 0; i < this.MAXNODES; i++) {
+				System.out.println("PATH i =\t" + this.path[i]);
+			}
+			int count = 0;
 			CITS2200ProjectTester.printDP(this.dp, this.MAXNODES);
 			//BitSet bs; //bitsetj;
 			for(int i = 0; i < (1<<this.MAXNODES); i++) { //CYCLE THROUGH EACH MASK/SUBSET OF THE VERTICES
-				System.out.println("NEXT MASK");
+				System.out.println("NEXT MASK -- i =\t" + i);
 				for(int j = 0; j < this.MAXNODES; j++) {
 					if((i & (1 << j)) != 0) { //If jth bit is set in i (WHICH OF THE VERTICES ARE PRESENT IN THE SUBSET) // i & (1<<j)
-						System.out.println("bs.get(j) is true.");
+						System.out.println("bs.get(j) is true. j =\t" + j);
 						for(int k = 0; k < this.MAXNODES; k++) {
-							System.out.println("adjacency:\t" + this.adj[k][j]);
+							System.out.println("k =\t" + k + " adjacency:\t" + this.adj[k][j]);
 							if( ((i & (1 << k)) != 0) && this.adj[k][j] && k != j) {
 								//System.out.println("bs.get(k) = " + bs.get(k) + " Adjacency:\t" + this.adj[k][j]);
 								if(this.dp.get(k).get((i ^ (1 << j)))) { //dp[k][i ^ (1<<j)]
-									System.out.println("entered\n");
 									this.dp.get(j).set(i);
+									
+									//ADD TO PATH
+									int v = this.dp.get(j).nextSetBit((1 << j) + 1); //after initialised 1 bit
+									System.out.println("entered value =\t" + v + "\n");
+									if(v == i) { //i is minimised with the node j
+										if(this.path[count] == null) { //not seen yet
+											System.out.println("THIS ELEMENT K entered\t" + k + " at count =\t" + count);
+											this.path[count++] = MyCITS2200Project.this.wikiLookup.get(k);
+										}
+									}
 									break;
 								}
 							}
@@ -483,6 +500,7 @@ public class MyCITS2200Project implements CITS2200Project {
 			for(int i = 0; i < this.MAXNODES; i++) {
 				System.out.println("Bit value at [" + i + "][" + ((1<<this.MAXNODES) -1) + "] = " + this.dp.get(i).get((1<<this.MAXNODES) -1));
 				if(this.dp.get(i).get((1<<this.MAXNODES) - 1)) {
+					this.path[count] = MyCITS2200Project.this.wikiLookup.get(i);
 					return true;
 				}
 			}
