@@ -451,6 +451,8 @@ public class MyCITS2200Project implements CITS2200Project {
 					System.out.println(i + " + " + j + " = " + this.adj[i][j]);
 				}
 			}
+
+			CITS2200ProjectTester.printDP(this.dp, this.MAXNODES);
 			//BitSet bs; //bitsetj;
 			for(int i = 0; i < (1<<this.MAXNODES); i++) { //CYCLE THROUGH EACH MASK/SUBSET OF THE VERTICES
 				System.out.println("NEXT MASK");
@@ -471,6 +473,8 @@ public class MyCITS2200Project implements CITS2200Project {
 					}
 				}
 			}
+
+			CITS2200ProjectTester.printDP(this.dp, this.MAXNODES);
 
 			for(int i = 0; i < this.MAXNODES; i++) {
 				System.out.println("MASK 15 bit value =\t" + this.dp.get(i).get((1 << this.MAXNODES) - 1));
