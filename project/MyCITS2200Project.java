@@ -475,8 +475,8 @@ public class MyCITS2200Project implements CITS2200Project {
 									this.dp.get(j).set(i);
 									
 									//ADD TO PATH
-									int v = this.dp.get(j).nextSetBit((1 << j) + 1); //after initialised 1 bit
-									System.out.println("entered value =\t" + v + "\n");
+									//int v = this.dp.get(j).nextSetBit((1 << j) + 1); //after initialised 1 bit
+									//System.out.println("entered value =\t" + v + "\n");
 									/*if(v == i) { //i is minimised with the node j
 										if(this.path[count] == null) { //not seen yet
 											System.out.println("THIS ELEMENT K entered\t" + k + " at count =\t" + count);
