@@ -459,7 +459,7 @@ public class MyCITS2200Project implements CITS2200Project {
 			for(int i = 0; i < this.MAXNODES; i++) {
 				System.out.println("PATH i =\t" + this.path[i]);
 			}
-			int count = 0;
+
 			CITS2200ProjectTester.printDP(this.dp, this.MAXNODES);
 			//BitSet bs; //bitsetj;
 			for(int i = 0; i < (1<<this.MAXNODES); i++) { //CYCLE THROUGH EACH MASK/SUBSET OF THE VERTICES
@@ -477,12 +477,12 @@ public class MyCITS2200Project implements CITS2200Project {
 									//ADD TO PATH
 									int v = this.dp.get(j).nextSetBit((1 << j) + 1); //after initialised 1 bit
 									System.out.println("entered value =\t" + v + "\n");
-									if(v == i) { //i is minimised with the node j
+									/*if(v == i) { //i is minimised with the node j
 										if(this.path[count] == null) { //not seen yet
 											System.out.println("THIS ELEMENT K entered\t" + k + " at count =\t" + count);
 											this.path[count++] = MyCITS2200Project.this.wikiLookup.get(k);
 										}
-									}
+									}*/
 									break;
 								}
 							}
@@ -496,11 +496,36 @@ public class MyCITS2200Project implements CITS2200Project {
 			for(int i = 0; i < this.MAXNODES; i++) {
 				System.out.println("MASK 15 bit value =\t" + this.dp.get(i).get((1 << this.MAXNODES) - 1));
 			}
-
 			for(int i = 0; i < this.MAXNODES; i++) {
 				System.out.println("Bit value at [" + i + "][" + ((1<<this.MAXNODES) -1) + "] = " + this.dp.get(i).get((1<<this.MAXNODES) -1));
 				if(this.dp.get(i).get((1<<this.MAXNODES) - 1)) {
-					this.path[count] = MyCITS2200Project.this.wikiLookup.get(i);
+					//HAMILTONIAN PATH DOES EXIST
+					BitSet seen = new BitSet(this.MAXNODES - 1);
+					int count = this.MAXNODES-1; //start at last path position
+					int j = 0;
+					int prev, mask, maskxor;
+					this.path[count--] = MyCITS2200Project.this.wikiLookup.get(i);
+					seen.set(i); //mark as seen
+					mask = (1 << this.MAXNODES) - 1;
+					//FIND PREVIOUS NODE ... ie walking backwards
+					while(seen.cardinality() < this.MAXNODES && count >= 0) {
+						prev = seen.nextClearBit(j);
+						maskxor = mask ^ (1 << i);
+						System.out.println("prev=\t" + prev + " i=\t" + i);
+						if(prev > (this.MAXNODES -1)) {
+							j = 0; //start from beginning 
+							continue;
+						}
+						if(dp.get(i).get(mask) == dp.get(prev).get(maskxor) && this.adj[prev][i]) { //PREVIOUS NODE
+							this.path[count--] = MyCITS2200Project.this.wikiLookup.get(prev);
+							seen.set(prev);
+							i = prev;
+							mask = maskxor;
+							continue;
+						}
+						j = (++j%this.MAXNODES);
+						continue;
+					}
 					return true;
 				}
 			}

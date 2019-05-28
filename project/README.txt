@@ -4,6 +4,10 @@ Major Decisions:
     - ArrayList prefered over array due to expansion opportunities
     - Arraylist containing linkedlist was not going to be space efficient due to sparse key - value pairs
         - HASHMAP containing linkedlists was therefore implemented
+    - Dynamic Programming technique used to solve Himaltonian paths.
+        - Initially "does a hamiltonian path exist?" is determined
+        - then cycle through each node to find the 'parent' node in the hamiltonian path starting at the final vertex
+        - O(2n * 2^n) = O(n * 2^n)
     
 
 ####################################
@@ -13,8 +17,14 @@ PROJECT STATUS:
     - | DONE | WRITE "public void addEdge(String, String)" method
     - | DONE | COMPLETED BFS ALGORITHM AND FOUND SHORTEST PATH.
     - | DONE | WRITE STRONGLY CONNECTED COMPONENTS ALGORITHM
-    - | | Write Himaltonian Path algorithm
-    - | | Test Himaltonian Path algorithim
+    - | DONE | Write Himaltonian Path algorithm
+    - | DONE | Test Himaltonian Path algorithim
+    - | | FIND CENTER NODES OF GRAPH
+    - | | TEST ALGORITHM TO FIND CENTERS
+    - | | WRITE REPORT SECTION: "SHORTEST PATH"
+    - | | WRITE REPORT SECTION: "HAMILTONIAN PATH"
+    - | | WRITE REPORT SECTION: "STRONGLY CONNECTED COMPONENTS"
+    - | | WRITE REPORT SECTION: "CENTERS & ECCENTRICITY"
 
 ####################################
 QUESTIONS:
@@ -26,4 +36,4 @@ SUGGESTIONS:
     - USE ARRAYLIST INSTEAD OF MAP FOR ITERATOR FUNCITONIONALITY?
     - USE ARRAYLIST TO ALLOW FOR BETTER TRANSPOSITION?
     - NEED TO IMPLEMENT QUEUE INSTEAD TO FIND SCC. ORDERING INCORRECT.
-    - MANY ERRORS IN HIMALTONIAN ALGORITHM
+    - CLEAN CLASSES AND LOOK FOR STORAGE EFFICIENCIES
