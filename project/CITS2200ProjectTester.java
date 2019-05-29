@@ -9,7 +9,8 @@ public class CITS2200ProjectTester {
 	private MyCITS2200Project myProj;
 	private static final boolean SP = false;
 	private static final boolean SCC = false;
-	private static final boolean HAM = true;
+	private static final boolean HAM = false;
+	private static final boolean CEN = true;
 
 	/** 
 	 * MAIN FUNCTION
@@ -33,6 +34,8 @@ public class CITS2200ProjectTester {
 			getSCC(proj.getStronglyConnectedComponents());
 		if(HAM)
 			getHamPath(proj.getHamiltonianPath());
+		if(CEN)
+			getGraphCenters(proj.getCenters());
 	}
 	
 	/**
@@ -132,6 +135,14 @@ public class CITS2200ProjectTester {
 			for(int j = 0; j < (1 << n); j++) {
 				System.out.println("dp[" + i + "][" + j + "] =\t" + arr.get(i).get(j));
 			}
+		}
+	}
+
+	public static void getGraphCenters(String[] gc) {
+		int size = gc.length;
+		print("GRAPH CENTERS:");
+		for(int i = 0; i < size; i++) {
+			print("->\t" + gc[i]);
 		}
 	}
 }

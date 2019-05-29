@@ -176,7 +176,8 @@ public class MyCITS2200Project implements CITS2200Project {
 	* @return an array containing all the URLs that correspond to pages that are centers.
 	*/
 	public String[] getCenters() {
-	return new String[1];
+		GraphCenters gc = new GraphCenters();
+		return gc.getCenters();
 	}
 
 	/**
@@ -535,6 +536,88 @@ public class MyCITS2200Project implements CITS2200Project {
 
 		public String[] getPath() {
 			return this.path;
+		}
+	}
+
+	/**********************************************/
+
+	public class GraphCenters {
+		
+		public GraphCenters() {}
+
+		/**
+		* Perform a BFS on a given vertex.
+		* @return the eccentricity associated with the vertex
+		* @param startVertex, the vertex assessed
+		* @param distance, array for managing distances
+		*/
+		private int run(int startVertex, int[] distance) {
+			LinkedList<Integer> q = new LinkedList<>(); //queue implementation
+			//LinkedList<Integer> ll; //adjacency list implementation
+			Iterator<Integer> it;
+			ArrayList<Colour> col = (ArrayList<Colour>) MyCITS2200Project.deepCopy(MyCITS2200Project.this.colour); //all nodes are set as unvisited
+			int w, x; //better name??
+
+			//BFS ALGORITHM
+			System.out.println("Start Vertex: " + startVertex + "\n");
+			distance[startVertex] = 0;
+			int max = 0;
+			q.add(startVertex);
+			while(q.peek() != null) {
+				w = q.remove(); //REMOVE FIRST ELEMENT IN THE QUEUE
+				//FIND ADJACENT VERTICES TO w
+				if(MyCITS2200Project.this.edgeList.get(w) == null) continue;
+				it = MyCITS2200Project.this.edgeList.get(w).listIterator(0); //adjacency list for the node
+				while(it.hasNext()) {
+					//CONNECTED OR "CHILD" OF w
+					x = it.next();
+					if(x == w) continue; //non-cyclical
+					if(Colour.WHITE.equals(col.get(x))) { //WHITE OR NOT SEEN
+						distance[x] = distance[w] + 1;
+						if(distance[x] > max) {
+							System.out.println("MAX DISTANCE FOR x = " + x + " is => " + distance[x]);
+							max = distance[x];
+						}
+						col.set(x, Colour.GREY); //SET TO GREY OR SEEN
+						q.add(x);
+					}
+				}
+				col.set(w, Colour.BLACK); //SET TO BLACK
+			}
+			return max;
+		}
+
+		public String[] getCenters() {
+			int numNodes = MyCITS2200Project.this.maxvd;
+			int min = Integer.MAX_VALUE;
+			BitSet minEcc = new BitSet(numNodes);
+			for(int i = 0; i < numNodes; i++) {
+				int max = this.run(i, new int[numNodes]);
+				System.out.println("NODE = " + i + "MAX = " + max);
+				if(min > max) { //max eccentricity is new minimum
+					minEcc.clear();
+					minEcc.set(i);
+					min = max;
+				}
+				else if(min == max) { //another minimum
+					minEcc.set(i);
+				}
+			}
+			int size = minEcc.cardinality();
+			if(size <= 0) return new String[0]; //empty array
+
+			int len = minEcc.length();
+			String[] centers = new String[size];
+			int j = 0;
+			int count = 0;
+			j = minEcc.nextSetBit(j);
+			while(j<len&& count < size) {
+				System.out.println("COUNT = " + count + " J = " + j);
+				centers[count++] = MyCITS2200Project.this.wikiLookup.get(j);
+				minEcc.set(j, false);
+				j = minEcc.nextSetBit(j+1);
+			}
+			return centers;
 		}
 	}
 }
