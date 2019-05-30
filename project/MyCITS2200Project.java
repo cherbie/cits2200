@@ -234,12 +234,11 @@ public class MyCITS2200Project implements CITS2200Project {
 		}
 
 		/**
-		 * RUN A BFS OVER AN ESTABLISHED GRAPH AND EXIT AS SOON AS
-		 * THE ENDING NODE IS REACHED.
-		 * NOT GARUANTEED TO COMPLETELY FILL SHORTEST PATH DISTANCE ARRAY
-		 * @param int startVertex IS THE STARTING VERTEX.
-		 * @param int endVertex IS THE ENDING VERTEX.
-		 * @return int SHORTEST PATH TO GET TO THE ENDING VERTEX OR -1 IF THE SHORTEST PATH DOES NOT EXIST.
+		 * Run a BFS over an established graph aand exit as soon as the ending node is reached.
+		 * Not garuanteed to have a shortest path defined between the two specified vertices.
+		 * @param int startVertex is the starting vertex.
+		 * @param int endVertex is the ending vertex.
+		 * @return the shortest path to get to the ending vertex or -1 if the shortest path does not exist.
 		 */
 		public int shortestPath(int startVertex, int endVertex) {
 			LinkedList<Integer> q = new LinkedList<>(); //FIRST-IN FIRST-OUT QUEUE IMPLEMENTATION
