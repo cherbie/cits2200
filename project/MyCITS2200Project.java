@@ -155,16 +155,11 @@ public class MyCITS2200Project implements CITS2200Project {
 	public int getShortestPath(String urlFrom, String urlTo) {
 		//arraylist.trimToSize();
 		// bfs lab work: /Users/herbsca/OneDrive/UWA/CITS2200/cits2200/lab6/SearchImpS.java
-		try {
-			int startVertex = this.nodeLookup.get(urlFrom); //vertex descriptor
-			int endVertex = this.nodeLookup.get(urlTo); //vertex descriptor
+		int startVertex = this.nodeLookup.get(urlFrom); //vertex descriptor
+		int endVertex = this.nodeLookup.get(urlTo); //vertex descriptor
 
-			MyBFS bfs = new MyBFS();
-			return bfs.shortestPath(startVertex, endVertex);
-		} catch(Exception e) {
-				System.out.println(e.toString());
-				return -1;
-		}
+		MyBFS bfs = new MyBFS();
+		return bfs.shortestPath(startVertex, endVertex);
 	}
 
 	/**
@@ -227,145 +222,93 @@ public class MyCITS2200Project implements CITS2200Project {
 	/*******************************************************************/
 	private class MyBFS {
 		//FIELDS
-		private int[] distance; 
-		private ArrayList<LinkedList<Integer>> vertexEdges;
+		private int[] 							distance; //DISTANCE OF NODES FROM ROOT NODE IN BFS-TREE
+		private ArrayList<LinkedList<Integer>> 	vertexEdges; //SHALLOW COPY OF GRAPH ADJACENCY LIST
 
 		/**
-		 * CONSTRUCTOR OF BFS CLASS
+		 * CONSTRUCTOR OF BREADTH-FIRST SEARCH CLASS IMPLEMENTATION
 		 */
-		public MyBFS() throws Exception {
-			int numNodes = MyCITS2200Project.this.maxvd;
-			this.distance = new int[numNodes];
+		public MyBFS() {
+			this.distance = new int[MyCITS2200Project.this.maxvd];
 			this.vertexEdges = MyCITS2200Project.this.edgeList;
-		}
-
-		/**
-		 * RUN ENTIRE BFS ALGORITHM ON THE ESTABLISHED GRAPH.
-		 * GARUANTEES SHORTEST PATH DISTANCE FIELD WILL BE UP-TO-DATE.
-		 * @param startVertex the starting vertex of the BFS.
-		 */
-		public void run(int startVertex) throws Exception {
-
-			LinkedList<Integer> q = new LinkedList<>(); //queue implementation
-			//LinkedList<Integer> ll; //adjacency list implementation
-			Iterator<Integer> it;
-			ArrayList<Colour> col = (ArrayList<Colour>) MyCITS2200Project.deepCopy(MyCITS2200Project.this.colour); //all nodes are set as unvisited
-			if(col.size() < MyCITS2200Project.this.maxvd) throw new Exception("ALL NODES ARE NOT SET AS 'UNVISITED'.");
-			int w, x; //better name??
-
-			//BFS ALGORITHM
-			this.distance[startVertex] = 0;
-			q.add(startVertex);
-			while(q.peek() != null) {
-				w = q.pop(); //REMOVE FIRST ELEMENT IN THE QUEUE
-				//FIND ADJACENT VERTICES TO w
-				if(MyCITS2200Project.this.edgeList.get(w) == null) continue;
-				it = MyCITS2200Project.this.edgeList.get(w).listIterator(0); //adjacency list for the node
-				while(it.hasNext()) {
-					//CONNECTED OR "CHILD" OF w
-					x = it.next();
-					if(x == w) continue; //non-cyclical
-					System.out.println(x);
-					if(Colour.WHITE.equals(col.get(x))) { //WHITE OR NOT SEEN
-						distance[x] = distance[w] + 1;
-						col.set(x, Colour.GREY); //SET TO GREY OR SEEN
-						q.add(x);
-					}
-				}
-				col.set(w, Colour.BLACK); //SET TO BLACK
-			}
-		}
-
-		/**
-		 * GET THE SHORTEST PATH TO EACH NODE.
-		 */
-		public int[] getDistances() {
-			return this.distance;
-		}
-
-		/**
-		 * GET THE SHORTEST PATH FOR A SPECIFIC NODE.
-		 */
-		public int getDistance(int node) {
-			return this.distance[node];
 		}
 
 		/**
 		 * RUN A BFS OVER AN ESTABLISHED GRAPH AND EXIT AS SOON AS
 		 * THE ENDING NODE IS REACHED.
 		 * NOT GARUANTEED TO COMPLETELY FILL SHORTEST PATH DISTANCE ARRAY
-		 * @param int startVertex is the starting vertex.
-		 * @param int endVertex is the ending vertex.
-		 * @return int shortest path to get to the ending vertex. 
+		 * @param int startVertex IS THE STARTING VERTEX.
+		 * @param int endVertex IS THE ENDING VERTEX.
+		 * @return int SHORTEST PATH TO GET TO THE ENDING VERTEX OR -1 IF THE SHORTEST PATH DOES NOT EXIST.
 		 */
-		public int shortestPath(int startVertex, int endVertex) throws Exception {
+		public int shortestPath(int startVertex, int endVertex) {
+			LinkedList<Integer> q = new LinkedList<>(); //FIRST-IN FIRST-OUT QUEUE IMPLEMENTATION
+			Iterator<Integer> it; //ITERATOR THROUGH ALL ADJACENT NODES
+			int node, x;
+			ArrayList<Colour> col = (ArrayList<Colour>) MyCITS2200Project.deepCopy(MyCITS2200Project.this.colour); //ALL NODES ARE SET AS VISITED
 
-			LinkedList<Integer> q = new LinkedList<>(); //queue implementation
-			Iterator<Integer> it;
-			int w, x;
-			ArrayList<Colour> col = (ArrayList<Colour>) MyCITS2200Project.deepCopy(MyCITS2200Project.this.colour); //all nodes are set as unvisited
-			if(colour.size() < MyCITS2200Project.this.maxvd) throw new Exception("ALL NODES ARE NOT SET AS 'UNVISITED'.");
-
-			//BFS ALGORITHM
-			this.distance[startVertex] = 0;
+			//ADAPTED BFS ALGORITHM
+			this.distance[startVertex] = 0; //SET ROOT NODE IN BFS-TREE'S DISTANCE TO ZERO
 			q.add(startVertex);
 			while(q.peek() != null) {
-				w = q.pop(); //REMOVE FIRST ELEMENT IN THE QUEUE
-				//FIND ADJACENT VERTICES TO w
-				if(MyCITS2200Project.this.edgeList.get(w) == null) continue;
-				it = MyCITS2200Project.this.edgeList.get(w).listIterator(0); //iterator starting at the first element
+				node = q.pop(); //REMOVE FIRST ELEMENT IN THE QUEUE
+				if(Colour.BLACK.equals(col.get(node))) continue;
+				else if(MyCITS2200Project.this.edgeList.get(node) == null) { //LEAF IN BFS-TREE
+					col.set(node, Colour.BLACK);
+					continue;	
+				}
+				//FIND ADJACENT VERTICES TO NODE
+				it = MyCITS2200Project.this.edgeList.get(node).listIterator(0); //iterator starting at the first element
 				while(it.hasNext()) {
-					//CONNECTED OR "CHILD" OF w
-					x = it.next();
-					System.out.println(x);
+					x = it.next(); //CONNECTED OR "CHILD" OF NODE
 					if(Colour.WHITE.equals(col.get(x))) { //WHITE OR NOT SEEN
-						if(w == x) continue; //non-cyclical
-						this.distance[x] = this.distance[w] + 1;
-						if(x == endVertex) return this.distance[endVertex]; //seen end point
+						if(node == x) continue; //NON-CYCLIC GRAPH
+						this.distance[x] = this.distance[node] + 1;
+						if(x == endVertex) return this.distance[endVertex]; //SEEN DESTINATION VERTEX
 						col.set(x, Colour.GREY); //SET TO GREY OR SEEN
 						q.add(x);
 					}
 				}
-				col.set(w, Colour.BLACK); //SET TO BLACK
+				col.set(node, Colour.BLACK); //SET TO BLACK
 			}
-			throw new Exception("BFS FAILED TO FIND THE END VERTEX");
+			return -1;
 		}
 	}
 
 	/*************************************************************/
 	private class MySCC {
-		//FIELDS
-		private ArrayList<ArrayList<String>> scc; 
-		private String[][] arrscc;
-		private ArrayList<Colour> colour;
+
+		private ArrayList<ArrayList<String>> 	scc; 
+		private String[][]						arrscc;
+		private ArrayList<Colour> 				colour;
+		private BitSet							visited;
 
 		/**
 		 * CONSTRUCTOR OF STRONGLY CONNECTED COMPONENTS (SCC) CLASS.
 		 */
 		public MySCC() {
-			int numNodes = MyCITS2200Project.this.maxvd;
 			this.scc = new ArrayList<>();
-			this.arrscc = new String[numNodes][numNodes];
-			this.colour = (ArrayList<Colour>) MyCITS2200Project.deepCopy(MyCITS2200Project.this.colour); //all nodes are set as unvisited
+			this.arrscc = new String[MyCITS2200Project.this.maxvd][MyCITS2200Project.this.maxvd];
+			this.colour = (ArrayList<Colour>) MyCITS2200Project.deepCopy(MyCITS2200Project.this.colour); //ALL NODES ARE SET AS UNVISITED
+			this.visited = new BitSet(MyCITS2200Project.this.maxvd);
 		}
 
 		/**
-		* Recursive DFS implementation starting at the vertex descriptor specified
-		* pushing to the stack 
-		* Colour.WHITE indicates node has not been visited.
-		* Colour.BLACK indicates node has been visited.
-		* @param node int vertex decriptor
+		* Recursive DFS implementation starting at the vertex descriptor specified.
+		* count is incremented and array containing all strongly connected components updated.
+		* @param node int vertex descriptor.
 		* @param index the 'group id' of the strongly connected components
-		* @param count the element id within the strongly connected component.
+		* @param count the element descriptor within the strongly connected component.
 		*/
 		private void dfs(int node, int index, int count) {
-			LinkedList<Integer> ll = MyCITS2200Project.this.transEdgeList.get(node); //transposed adjacently list for vertices
-			if(ll == null) return; //NO CONNECTED NODES TO ADD TO SCC
+			LinkedList<Integer> ll = MyCITS2200Project.this.transEdgeList.get(node); //SHALLOW COPY OF TRANSPOSED ADJACENCY LIST FOR THE VERTICES
+			if(ll == null) return; //NO CONNECTED NODES TO ADD TO SCC GROUP
 			Iterator<Integer> it = ll.listIterator(0);
 			System.out.println("TRANS EDGE LIST: " + node + "\t");
-			this.arrscc[index][count] = MyCITS2200Project.this.wikiLookup.get(node);
+			this.arrscc[index][count] = MyCITS2200Project.this.wikiLookup.get(node); //ADD WIKI URL TO SCC ARRAY
 
 			this.colour.set(node, Colour.BLACK);
+			this.visited.set(node);
 			while(it.hasNext()) {
 				int vd = it.next();
 				System.out.println("NEXT=\t" + vd + "COLOUR=\t" + this.colour.get(vd));
@@ -376,11 +319,12 @@ public class MyCITS2200Project implements CITS2200Project {
 		
 		/**
 		* Implements Kosaraju's algorithm performing a DFS twice on a predefined graph
-		* to list all strongly connected nodes/components
+		* inorder to find and list all strongly connected components.
 		* @return array containing every strongly connected component (node descriptors)
 		*/
 		public String[][] getSCC() {
 			ArrayList<Colour> col = (ArrayList<Colour>) MyCITS2200Project.deepCopy(MyCITS2200Project.this.colour); //all nodes are set as unvisited
+			BitSet queueVisited = new BitSet(MyCITS2200Project.this.maxvd); //ALL NODES ARE SET AS UNVISITED
 			System.out.println(col.get(1));
 			LinkedList<Integer> queue = new LinkedList<>(); //QUEUE TO RETRACE ORDER OF FIRST DFS
 			Stack<Integer> dfsStack = new Stack<>();
@@ -398,6 +342,7 @@ public class MyCITS2200Project implements CITS2200Project {
 					System.out.println("node not seen");
 					queue.add(node); //push node to stack
 					col.set(node, Colour.BLACK); //Colour.BLACK symblises visited
+					queueVisited.set(node);
 					if(MyCITS2200Project.this.edgeList.get(node) == null) continue;
 					it = MyCITS2200Project.this.edgeList.get(node).listIterator(0); //ITERATOR OVER ADJACENCY LIST
 					while(it.hasNext()) { //ADD ALL CONNECTED NODES TO DFS STACK
@@ -408,13 +353,13 @@ public class MyCITS2200Project implements CITS2200Project {
 						}
 					}
 				}
-				else System.out.println("ELSE: " + col.get(node));
+				else System.out.println("ELSE: " + queueVisited.get(node));
 			}
 
-			//transposition handled in MyCITS2200Projct.addEdge()
-
-			int numscc = 0; //SET NUMBER OF STRONGLY CONNECTED COMPONENTS TO ZERO
+			//TRANSPOSITION HANDLED IN MyCITS2200Project.addEdge()
+			
 			//CALLS RECURSIVE DFS IMPLEMENTATION
+			int numscc = 0; //SET NUMBER OF STRONGLY CONNECTED COMPONENTS TO ZERO
 			System.out.println("REACHED 2nd DFS");
 			while(!queue.isEmpty()) {
 				node = queue.remove();
