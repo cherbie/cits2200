@@ -101,26 +101,10 @@ public class MyCITS2200Project implements CITS2200Project {
 	}
 
 	/**
-	 * Search lookup table to find the vertex descriptor for a particular string
-	 * @param String url of wiki address
-	 * @return int vertex decriptor of node/vertex
-	 
-	private int getVertexDescriptor(String url) throws Exception {
-		int vd = this.wikiAddr.indexOf(url);
-		if(vd < 0) { //vertex descriptor does not exist in lookup table
-			throw new Exception("Wiki URL does not exist in lookup table and hence is not part of graph.");
-		}
-		return vd;
-	}
-	*/
-
-	/**
 	* Finds the shorest path in number of links between two pages.
-	* If there is no path, returns -1.
-	* 
 	* @param urlFrom the URL where the path should start.
 	* @param urlTo the URL where the path should end.
-	* @return the length of the shorest path in number of links followed.
+	* @return the length of the shorest path in number of links followed, otherwise returns -1.
 	*/
 	public int getShortestPath(String urlFrom, String urlTo) {
 		if(urlFrom.equals(urlTo)) return 0;
@@ -156,13 +140,8 @@ public class MyCITS2200Project implements CITS2200Project {
 	* @return an array containing every strongly connected component.
 	*/
 	public String[][] getStronglyConnectedComponents() {
-		try {
-			MySCC myscc = new MySCC();
-			return myscc.getSCC();
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		return new String[1][1];
+		MySCC myscc = new MySCC();
+		return myscc.getSCC();
 	}
 
 	/**
@@ -205,7 +184,7 @@ public class MyCITS2200Project implements CITS2200Project {
 			BitSet visited = new BitSet(MyCITS2200Project.this.maxvd); //MARK VERTEICES AS UNVISITED
 			int node, x;
 
-			//BFS ALGORITHM
+			// -- BFS ALGORITHM --
 			distance[startVertex] = 0; //SET ROOT NODE IN BFS-TREE'S DISTANCE TO ZERO
 			q.add(startVertex);
 			visited.set(startVertex);
