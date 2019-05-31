@@ -7,8 +7,8 @@ import java.util.*;
 
 public class CITS2200ProjectTester {
 	private MyCITS2200Project myProj;
-	private static final boolean SP = false;
-	private static final boolean SCC = false;
+	private static final boolean SP = true;
+	private static final boolean SCC = true;
 	private static final boolean HAM = false;
 	private static final boolean CEN = true;
 
@@ -19,17 +19,17 @@ public class CITS2200ProjectTester {
 		// Change this to be the path to the graph file.
 		String pathToGraphFile = args[0];
 		// Create an instance of your implementation.
-		MyCITS2200Project proj = new MyCITS2200Project();
+		CITS2200Project proj = new MyCITS2200Project();
 		// Load the graph into the project.
 		loadGraph(proj, pathToGraphFile);
 
 		/** TESTING **/
-		printLookupTable(proj.wikiLookup);
-		printAdjacencyList(proj.edgeList);
+		//printLookupTable(proj.wikiLookup);
+		//printAdjacencyList(proj.edgeList);
 
 		print("TESTING");
 		if(SP)
-			getShortestPath(proj, "NODE1", "NODE4");
+			getShortestPath(proj, "NODE1", "NODE3");
 		if(SCC)
 			getSCC(proj.getStronglyConnectedComponents());
 		if(HAM)
@@ -41,7 +41,7 @@ public class CITS2200ProjectTester {
 	/**
 	 * READS GIVEN FILE AND ESTABLISHES GRAPH NODES AND EDGES.
 	 */
-	public static void loadGraph(MyCITS2200Project project, String path) {
+	public static void loadGraph(CITS2200Project project, String path) {
 		// The graph is in the following format:
 		// Every pair of consecutive lines represent a directed edge.
 		// The edge goes from the URL in the first line to the URL in the second line.
