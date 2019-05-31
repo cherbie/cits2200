@@ -447,6 +447,11 @@ public class MyCITS2200Project implements CITS2200Project {
 			return max;
 		}
 
+		/**
+		* Finds the set of minimum eccentricities for the given graph and returns these 
+		* in an array of Strings.
+		* @return String[] containing the set of centre vertices.
+		**/
 		public String[] getCenters() {
 			int numNodes = MyCITS2200Project.this.maxvd;
 			int min = Integer.MAX_VALUE; //INITIALISE ECCENTRICITY TO MAXIMUM
