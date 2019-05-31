@@ -9,7 +9,7 @@ public class CITS2200ProjectTester {
 	private MyCITS2200Project myProj;
 	private static final boolean SP = true;
 	private static final boolean SCC = true;
-	private static final boolean HAM = false;
+	private static final boolean HAM = true;
 	private static final boolean CEN = true;
 
 	/** 
